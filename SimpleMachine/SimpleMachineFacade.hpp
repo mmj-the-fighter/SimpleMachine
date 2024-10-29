@@ -28,7 +28,7 @@ public:
 
 		assembler.Translate();
 		
-		machine.LoadProgram(0, program);
+		machine.LoadProgram(0, &program);
 		machine.Execute();
 	}
 
