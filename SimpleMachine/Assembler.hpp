@@ -202,7 +202,7 @@ private:
 
 		for (count = 0; count < 3; count++) {
 			if (NULL != operandArray[count]) {
-				delete operandArray[count];
+				delete[] operandArray[count];
 				operandArray[count] = NULL;
 			}
 		}
