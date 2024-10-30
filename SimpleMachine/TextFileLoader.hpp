@@ -58,7 +58,7 @@ public:
 		buffer = new char[bufferLength + 1];
 		const char* pc = str.c_str();
 		int i = 0;
-		while ((buffer[i] = pc[i]) != '\0'){
+		while ((buffer[i] = tolower(pc[i])) != '\0'){
 			++i;
 		}
 		std::cout << buffer << std::endl;

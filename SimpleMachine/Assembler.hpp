@@ -11,17 +11,39 @@ class Assembler
 	TextFileLoader* tfLoader;
 	Program* program;
 	SymbolTable table;
+	SymbolTable registerTable;
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
 		program = prog;
 		tfLoader = loader;
+		InitRegisterTable();
 	}
 
 	Assembler(){
 		program = NULL;
 		tfLoader = NULL;
+		InitRegisterTable();
 	}
 
+	void InitRegisterTable()
+	{
+		registerTable.AddLabel("a", 0);
+		registerTable.AddLabel("b", 1);
+		registerTable.AddLabel("c", 2);
+		registerTable.AddLabel("d", 3);
+		registerTable.AddLabel("e", 4);
+		registerTable.AddLabel("f", 5);
+		registerTable.AddLabel("g", 6);
+		registerTable.AddLabel("h", 7);
+		registerTable.AddLabel("i", 8);
+		registerTable.AddLabel("j", 9);
+		registerTable.AddLabel("k", 10);
+		registerTable.AddLabel("l", 11);
+		registerTable.AddLabel("m", 12);
+		registerTable.AddLabel("n", 13);
+		registerTable.AddLabel("n", 14);
+		registerTable.AddLabel("o", 15);
+	}
 	void Set(TextFileLoader* loader, Program* prog){
 		program = prog;
 		tfLoader = loader;
@@ -161,6 +183,9 @@ private:
 		unsigned char op1 = 0;
 		unsigned char op2 = 0;
 		unsigned char op3 = 0;
+		int regAddr1 = 0;
+		int regAddr2 = 0;
+		int regAddr3 = 0;
 		switch (opcode) {
 		case HLT_CODE:
 			program->WriteCode1Byte(opcode);
@@ -174,27 +199,31 @@ private:
 			break;
 		case INC_CODE:
 		case DCR_CODE:
-			op1 = atoi(&operandArray[0][0]);
-			program->WriteCode2Bytes(opcode, op1);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
+			program->WriteCode2Bytes(opcode, regAddr1);
 			break;
 		case ADD_CODE:
 		case SUB_CODE:
 		case MOV_CODE:
-		case LOAD_CODE:
 		case LDR_CODE:
-		case STORE_CODE:
 		case STR_CODE:
+			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
+			regAddr2 = registerTable.Lookup(&operandArray[1][0]);
+			program->WriteCode3Bytes(opcode, regAddr1, regAddr2);
+			break;
+		case LOAD_CODE:
+		case STORE_CODE:
 		case MVI_CODE:
-			op1 = atoi(&operandArray[0][0]);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
 			op2 = atoi(&operandArray[1][0]);
-			program->WriteCode3Bytes(opcode, op1, op2);
+			program->WriteCode3Bytes(opcode, regAddr1, op2);
 			break;
 		case ADD3_CODE:
 		case SUB3_CODE:
-			op1 = atoi(&operandArray[0][0]);
-			op2 = atoi(&operandArray[1][0]);
-			op3 = atoi(&operandArray[2][0]);
-			program->WriteCode4Bytes(opcode, op1, op2, op3);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
+			regAddr2 = registerTable.Lookup(&operandArray[1][0]);
+			regAddr3 = registerTable.Lookup(&operandArray[2][0]);
+			program->WriteCode4Bytes(opcode,regAddr1, regAddr2, regAddr3);
 		}
 	}
 };
