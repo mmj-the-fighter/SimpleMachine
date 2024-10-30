@@ -132,6 +132,7 @@
     <ClInclude Include="Machine.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="SimpleMachineFacade.hpp" />
+    <ClInclude Include="SymbolTable.hpp" />
     <ClInclude Include="TextFileLoader.hpp" />
   </ItemGroup>
   <ItemGroup>
