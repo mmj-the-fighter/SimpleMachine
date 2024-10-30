@@ -108,7 +108,7 @@ private:
 		char c = buffer[i];
 		char opcodestr[1024];
 		char operandBuffer[1024];
-		char* operandArray[3];
+		char operandArray[3][1024];
 		bool isLabel = false;
 
 		
@@ -138,9 +138,7 @@ private:
 		int instructionLength;
 		program->GetOpcodeAndLength(opcodestr, &opcode, &instructionLength);
 
-		for (count = 0; count < 3; count++){
-			operandArray[count] = NULL;
-		}
+
 
 		for (count = 0; count < instructionLength-1; count++) {
 			++i;
@@ -153,7 +151,6 @@ private:
 				c = buffer[i];
 			}
 			operandBuffer[k] = '\0';
-			operandArray[count] = new char[k + 1];
 			j = 0;
 			while ((operandArray[count][j] = operandBuffer[j]) != '\0') {
 				++j;
@@ -170,14 +167,14 @@ private:
 			break;
 		case JNZ_CODE:
 		case JZ_CODE:
-			address = table.Lookup(operandArray[0]);
+			address = table.Lookup(&operandArray[0][0]);
 			if (address >= 0){
 				program->WriteCode2Bytes(opcode, address);
 			}
 			break;
 		case INC_CODE:
 		case DCR_CODE:
-			op1 = atoi(operandArray[0]);
+			op1 = atoi(&operandArray[0][0]);
 			program->WriteCode2Bytes(opcode, op1);
 			break;
 		case ADD_CODE:
@@ -188,25 +185,17 @@ private:
 		case STORE_CODE:
 		case STR_CODE:
 		case MVI_CODE:
-			op1 = atoi(operandArray[0]);
-			op2 = atoi(operandArray[1]);
+			op1 = atoi(&operandArray[0][0]);
+			op2 = atoi(&operandArray[1][0]);
 			program->WriteCode3Bytes(opcode, op1, op2);
 			break;
 		case ADD3_CODE:
 		case SUB3_CODE:
-			op1 = atoi(operandArray[0]);
-			op2 = atoi(operandArray[1]);
-			op3 = atoi(operandArray[2]);
+			op1 = atoi(&operandArray[0][0]);
+			op2 = atoi(&operandArray[1][0]);
+			op3 = atoi(&operandArray[2][0]);
 			program->WriteCode4Bytes(opcode, op1, op2, op3);
 		}
-
-		for (count = 0; count < 3; count++) {
-			if (NULL != operandArray[count]) {
-				delete[] operandArray[count];
-				operandArray[count] = NULL;
-			}
-		}
-
 	}
 };
 
