@@ -41,8 +41,7 @@ public:
 		registerTable.AddLabel("l", 11);
 		registerTable.AddLabel("m", 12);
 		registerTable.AddLabel("n", 13);
-		registerTable.AddLabel("n", 14);
-		registerTable.AddLabel("o", 15);
+		registerTable.AddLabel("o", 14);
 	}
 	void Set(TextFileLoader* loader, Program* prog){
 		program = prog;
