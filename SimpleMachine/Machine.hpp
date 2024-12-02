@@ -4,24 +4,25 @@
 #include <iostream>
 #include "InstructionOpcodeMap.hpp"
 #include "Program.hpp"
+#include "CommonDefs.h"
 
 struct Machine{
-	unsigned char regs[16];
+	unsigned char regs[MAXREGS];
 	unsigned char pc;
-	unsigned char memory[256];
+	unsigned char memory[MAXMEMBYTES];
 	Program* program;
 	bool zeroFlag;
 	
 
 	Machine(){
-		memset(memory, 0xff, 256);
+		memset(memory, 0, MAXMEMBYTES);
 		zeroFlag = false;
 		program = NULL;
 	}
 
 	void LoadProgram(int startingAddress, Program* aProgram){
 		program = aProgram;
-		unsigned char* code = program->GetHexcodePointer();
+		unsigned char* code = program->GetByteCodePointer();
 		int codeLength = program->GetCurrentMarker();
 		memcpy(memory + startingAddress, code, codeLength);
 		pc = startingAddress;
@@ -42,6 +43,10 @@ struct Machine{
 				break;
 			}
 			int instrLen = program->GetInstructionLength(opcode);
+			if (instrLen == 0){
+				std::cout << "Unexpected program failure!\n";
+				break;
+			}
 			switch (instrLen){
 			case 2:
 				op1 = memory[pc + 1];
@@ -164,7 +169,7 @@ struct Machine{
 	}
 
 	void ShowMemory(){
-		for (int i = 0; i < 256; i++){
+		for (int i = 0; i < MAXMEMBYTES; i++){
 			if (i%3 == 0){
 				std::cout << std::endl;
 			}

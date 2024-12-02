@@ -3,11 +3,12 @@
 #include <string>
 #include "InstructionOpcodeMap.hpp"
 #include "SymbolTable.hpp"
+#include "CommonDefs.h"
 
 class Program
 {
 private:
-	unsigned char hexcode[256];
+	unsigned char byteCode[MAXMEMBYTES];
 	int currentMarker;
 	InstructionOpcodeMap *imap;
 public:
@@ -41,47 +42,47 @@ public:
 
 	void WriteInstructionFirstPass(char *opcodeStr){
 		int instrLen = imap->GetInstructionLengthForOpcodeStr(opcodeStr);
-		if (currentMarker >= 256 - instrLen){
+		if (currentMarker >= MAXMEMBYTES - instrLen){
 			return;
 		}
 		currentMarker = currentMarker + instrLen;
 	}
 
 	void WriteCode1Byte(unsigned char byte1){
-		if (currentMarker >= 256 - 1){
+		if (currentMarker >= MAXMEMBYTES - 1){
 			return;
 		}
-		hexcode[currentMarker] = byte1;
+		byteCode[currentMarker] = byte1;
 		currentMarker += 1;
 	}
 
 	void WriteCode2Bytes(unsigned char byte1, unsigned char byte2){
-		if (currentMarker >= 256 - 2){
+		if (currentMarker >= MAXMEMBYTES - 2){
 			return;
 		}
-		hexcode[currentMarker] = byte1;
-		hexcode[currentMarker+1] = byte2;
+		byteCode[currentMarker] = byte1;
+		byteCode[currentMarker + 1] = byte2;
 		currentMarker += 2;
 	}
 
 	void WriteCode3Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3){
-		if (currentMarker >= 256 - 3){
+		if (currentMarker >= MAXMEMBYTES - 3){
 			return;
 		}
-		hexcode[currentMarker] = byte1;
-		hexcode[currentMarker + 1] = byte2;
-		hexcode[currentMarker + 2] = byte3;
+		byteCode[currentMarker] = byte1;
+		byteCode[currentMarker + 1] = byte2;
+		byteCode[currentMarker + 2] = byte3;
 		currentMarker += 3;
 	}
 
 	void WriteCode4Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4){
-		if (currentMarker >= 256 - 4){
+		if (currentMarker >= MAXMEMBYTES - 4){
 			return;
 		}
-		hexcode[currentMarker] = byte1;
-		hexcode[currentMarker + 1] = byte2;
-		hexcode[currentMarker + 2] = byte3;
-		hexcode[currentMarker + 3] = byte4;
+		byteCode[currentMarker] = byte1;
+		byteCode[currentMarker + 1] = byte2;
+		byteCode[currentMarker + 2] = byte3;
+		byteCode[currentMarker + 3] = byte4;
 		currentMarker += 4;
 	}
 
@@ -90,8 +91,8 @@ public:
 		return currentMarker;
 	}
 
-	unsigned char* GetHexcodePointer() {
-		return &hexcode[0];
+	unsigned char* GetByteCodePointer() {
+		return &byteCode[0];
 	}
 	
 };

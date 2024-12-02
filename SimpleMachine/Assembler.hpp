@@ -5,6 +5,7 @@
 #include "Program.hpp"
 #include "TextFileLoader.hpp"
 #include "SymbolTable.hpp"
+#include "CommonDefs.h"
 
 class Assembler
 {
@@ -43,137 +44,184 @@ public:
 		registerTable.AddLabel("n", 13);
 		registerTable.AddLabel("o", 14);
 	}
+
 	void Set(TextFileLoader* loader, Program* prog){
 		program = prog;
 		tfLoader = loader;
 	}
 
-	void PassForSymbols(){
+	bool PassForSymbols(){
 		int i = 0, k = 0;
 		int marker = 0;
 		char c, ch;
-		char buffer[1024];
-		unsigned char * hexcode = program->GetHexcodePointer();
+		char buffer[BUFFERLENGTH];
+		unsigned char * byteCode = program->GetByteCodePointer();
+		int lineNum = 1;
 
-		while ((c = tfLoader->GetTextAt(i)) != '\0'){
+		while ((c = tfLoader->GetTextAt(i)) != '\0') {
 			k = 0;
-			while (c != '\n' && c != '\0'){
+			while (k < BUFFERLENGTH-1 && c != '\n' && c != '\0'){
 				buffer[k] = c;
 				++k;
 				++i;
 				c = tfLoader->GetTextAt(i);
 			}
+			if (k >= BUFFERLENGTH-1){
+				return false;
+			}
 			buffer[k] = '\0';
-			StoreSymbolIfAny(buffer);
+			if (!StoreSymbolIfAny(buffer)){
+				return false;
+			}
 			++i;
 		}
+		return true;
 	}
 
 
-	void Translate(){
+	bool Translate(){
 		int i = 0, k = 0;
 		int marker = 0;
 		char c, ch;
-		char buffer[1024];
-		unsigned char * hexcode = program->GetHexcodePointer();
+		char buffer[BUFFERLENGTH];
+		unsigned char * byteCode = program->GetByteCodePointer();
 		program->Clear();
-		PassForSymbols();
+		if (!PassForSymbols()){
+			return false;
+		}
 		program->Clear();
 		while ((c = tfLoader->GetTextAt(i)) != '\0'){
 			k = 0;
-			while (c != '\n' && c != '\0'){
+			while (k < BUFFERLENGTH-1 && c != '\n' && c != '\0'){
 				buffer[k] = c;
 				++k;
 				++i;
 				c = tfLoader->GetTextAt(i);
 			}
+			if (k >= BUFFERLENGTH - 1){
+				return false;
+			}
 			buffer[k] = '\0';
-			Assemblehex(buffer);
+			if (!AssembleByteCode(buffer)){
+				return false;
+			}
 			++i;
 		}
+		return true;
 	}
 private:
-	void StoreSymbolIfAny(char* buffer){
+	//returns false if buffer is overflowed
+	bool StoreSymbolIfAny(char* buffer){
 		int i = 0;
 		int k = 0;
 		char c = buffer[i];
-		char opcodestr[1024];
+		char opcodestr[BUFFERLENGTH];
 		bool isLabel = false;
-		while (c != '#' && c != '\0' && (isalpha(c) || c == ':')){
+		while (k < BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalpha(c) || c == ':')){
 			opcodestr[k] = c;
 			++k;
 			++i;
-			c = buffer[i];
+			if (i < BUFFERLENGTH){
+				c = buffer[i];
+			}
+			else{
+				c = '\0';
+			}
+			
 			if (c == ':'){
 				isLabel = true;
 			}
 		}
-		if (c == '#'){
-			return;
+		if (k >= BUFFERLENGTH - 1){
+			return false;
+		}
+		if (c == '#') {
+			return true;
 		}
 		opcodestr[k] = '\0';
 		if (isLabel){
 			--k;
+			if (k < 0) {
+				return false;
+			}
 			opcodestr[k] = '\0';
 			table.AddLabel(opcodestr, program->GetCurrentMarker());
-			return;
+			return true;
 		}
 		program->WriteInstructionFirstPass(opcodestr);
+		return true;
 	}
 
-	void Assemblehex(char* buffer){
+	bool AssembleByteCode(char* buffer){
 		int i = 0;
 		int j = 0;
 		int k = 0;
 		int count = 0;
 		char c = buffer[i];
-		char opcodestr[1024];
-		char operandBuffer[1024];
-		char operandArray[3][1024];
+		char opcodestr[BUFFERLENGTH];
+		char operandBuffer[BUFFERLENGTH];
+		char operandArray[3][BUFFERLENGTH];
 		bool isLabel = false;
 
-		
-
 		//Read first string
-		while (c != '#' && c != '\0' && (isalnum(c) || c == ':')){
+		while (k<BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalnum(c) || c == ':')){
 			opcodestr[k] = c;
 			++k;
 			++i;
-			c = buffer[i];
+			if (i < BUFFERLENGTH){
+				c = buffer[i];
+			}
+			else{
+				c = '\0';
+			}
+			
 			if (c == ':'){
 				isLabel = true;
 			}
 		}
+		if (k >= BUFFERLENGTH - 1){
+			return false;
+		}
 		//If comment do nothing, read next line
 		if (c == '#'){
-			return;
+			return true;
 		}
 		opcodestr[k] = '\0';
 		//if label do nothing, read next line
-		if (isLabel){
+		if (isLabel) {
 			//std::cout << opcodestr <<":"<< program->GetCurrentMarker() << std::endl;
-			return;
+			return true;
 		}
 
 		unsigned char opcode;
 		int instructionLength;
 		program->GetOpcodeAndLength(opcodestr, &opcode, &instructionLength);
-
+		if (instructionLength < 1 || instructionLength > 4){
+			return false;
+		}
 
 
 		for (count = 0; count < instructionLength-1; count++) {
 			++i;
-			c = buffer[i];
+			if (i < BUFFERLENGTH){
+				c = buffer[i];
+			}
+			else{
+				c = '\0';
+			}
 			k = 0;
-			while (c != '\0' && !isspace(c)) {
+			while (i < BUFFERLENGTH && k < BUFFERLENGTH - 1 && c != '\0' && !isspace(c)) {
 				operandBuffer[k] = c;
 				++k;
 				++i;
 				c = buffer[i];
 			}
+			if (k >= BUFFERLENGTH - 1) {
+				return false;
+			}
 			operandBuffer[k] = '\0';
 			j = 0;
-			while ((operandArray[count][j] = operandBuffer[j]) != '\0') {
+			while (j < BUFFERLENGTH && (operandArray[count][j] = operandBuffer[j]) != '\0') {
 				++j;
 			}
 		}
@@ -224,6 +272,7 @@ private:
 			regAddr3 = registerTable.Lookup(&operandArray[2][0]);
 			program->WriteCode4Bytes(opcode,regAddr1, regAddr2, regAddr3);
 		}
+		return true;
 	}
 };
 

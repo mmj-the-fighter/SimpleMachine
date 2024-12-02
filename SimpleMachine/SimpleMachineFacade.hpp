@@ -26,7 +26,9 @@ public:
 		
 		program.Clear();
 
-		assembler.Translate();
+		if (!assembler.Translate()){
+			std::cout << "Translation failed\n";
+		}
 		
 		machine.LoadProgram(0, &program);
 		machine.Execute();
