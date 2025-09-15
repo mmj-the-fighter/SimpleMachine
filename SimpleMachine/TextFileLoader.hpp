@@ -49,7 +49,6 @@ public:
 		}
 		std::ifstream in(filename);
 		if (!in.is_open()) {
-			std::cout << "Cannot load program source file.";
 			return false;
 		}
 		std::string str((std::istreambuf_iterator<char>(in)),

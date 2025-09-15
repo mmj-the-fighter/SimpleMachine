@@ -22,7 +22,12 @@ public:
 	}
 	void ExecuteProgram(const char* programName){
 		
-		textFileLoader.LoadTextFromFile(programName);
+		bool res = textFileLoader.LoadTextFromFile(programName);
+
+		if (!res) {
+			std::cout << programName << ": File Not Found";
+			return;
+		}
 		
 		program.Clear();
 

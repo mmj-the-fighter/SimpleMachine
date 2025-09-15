@@ -20,6 +20,6 @@ int main()
 	sm.SetCell(203, 4);
 	sm.SetCell(204, 5);
 	sm.ExecuteProgram("program.asm");
-	std::cout << sm.GetCell(255) << std::endl;
+	std::cout << "\n" << "Content of Memory Cell #255: "<< sm.GetCell(255) << std::endl;
 	return 0;
 }
