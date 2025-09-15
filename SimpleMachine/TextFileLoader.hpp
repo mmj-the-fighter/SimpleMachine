@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 class TextFileLoader
 {
@@ -58,10 +59,15 @@ public:
 		buffer = new char[bufferLength + 1];
 		const char* pc = str.c_str();
 		int i = 0;
-		while ((buffer[i] = tolower(pc[i])) != '\0'){
-			++i;
-		}
+
+		bufferLength = str.size();
+		buffer = new char[bufferLength + 1];
+		std::transform(str.begin(), str.end(), buffer,
+			[](unsigned char c) { return std::tolower(c); });
+		buffer[bufferLength] = '\0';
+
 		std::cout << buffer << std::endl;
+		return true;
 	}
 };
 
