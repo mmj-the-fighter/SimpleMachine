@@ -48,7 +48,7 @@ public:
 		if (filename.compare("") == 0) {
 			return false;
 		}
-		std::ifstream in(filename);
+		std::ifstream in(filename.c_str());
 		if (!in.is_open()) {
 			return false;
 		}
@@ -62,8 +62,7 @@ public:
 
 		bufferLength = str.size();
 		buffer = new char[bufferLength + 1];
-		std::transform(str.begin(), str.end(), buffer,
-			[](unsigned char c) { return std::tolower(c); });
+		std::transform(str.begin(), str.end(), buffer, ::tolower);
 		buffer[bufferLength] = '\0';
 
 		std::cout << buffer << std::endl;
