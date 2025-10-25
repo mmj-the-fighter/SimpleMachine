@@ -103,6 +103,7 @@ public:
 			}
 			buffer[k] = '\0';
 			if (!AssembleByteCode(buffer)){
+				std::cout << "Invalid instruction:"<< buffer << "\n";
 				return false;
 			}
 			++i;
