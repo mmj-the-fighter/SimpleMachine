@@ -31,9 +31,19 @@ public:
 		currentMarker = 0;
 	}
 
-	void GetOpcodeAndLength(char *opcodeStr, unsigned char* opcode, int *len){
-		*opcode = imap->GetOpcode(opcodeStr);
-		*len = imap->GetInstructionLengthForOpcode(*opcode);
+	bool GetOpcodeAndLength(char *opcodeStr, unsigned char* opcode, int *len){
+		bool found;
+		*opcode = imap->GetOpcode(opcodeStr, &found);
+		if (found) {
+			*len = imap->GetInstructionLengthForOpcode(*opcode);
+		}
+		return found;
+	}
+
+	bool IsOpcode(char *opcodeStr) {
+		bool found;
+		imap->GetOpcode(opcodeStr,&found);
+		return found;
 	}
 
 	int GetInstructionLength(unsigned char opcode) {

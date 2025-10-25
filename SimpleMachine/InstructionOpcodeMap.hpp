@@ -85,12 +85,16 @@ public:
 
 	}
 
-	unsigned char GetOpcode(char *str){
+	unsigned char GetOpcode(char *str, bool *found){
 		unsigned char opcode = 0xFF;
 		std::string keyToFind(str);
 		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
 		if (it != inopmap.end()) {
 			opcode = it->second;
+			*found = true;
+		}
+		else {
+			*found = false;
 		}
 		return opcode;
 	}

@@ -58,6 +58,7 @@ public:
 		while (true) {
 			tfLoader->GetNonEmptyLine(buffer, BUFFERLENGTH, &ssm, &lineNumber);
 			if (!StoreSymbolIfAny(buffer)) {
+				std::cout << "Pass for symbols failed! "<<" at line# "<<lineNumber<<'\n';
 				return false;
 			}
 			if (tfLoader->GetTextAt(ssm) == '\0') {
@@ -74,7 +75,6 @@ public:
 		int lineNumber = 0;
 		
 		if (!PassForSymbols()){
-			std::cout << "Pass for symbols failed!\n";
 			return false;
 		}
 
@@ -128,6 +128,21 @@ private:
 				return false;
 			}
 			opcodestr[k] = '\0';
+			bool found = program->IsOpcode(opcodestr);
+			if (found) {
+				std::cout << "opcode " << opcodestr << " cannot be label\n";
+				return false;
+			}
+			table.Lookup(opcodestr, &found);
+			if (found) {
+				std::cout << "label " << opcodestr << " is already used\n";
+				return false;
+			}
+			registerTable.Lookup(opcodestr, &found);
+			if (found) {
+				std::cout << "register " << opcodestr << " cannot be label\n";
+				return false;
+			}
 			table.AddLabel(opcodestr, program->GetCurrentMarker());
 			return true;
 		}
