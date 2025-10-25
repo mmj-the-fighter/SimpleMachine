@@ -22,6 +22,7 @@ enum {
 	MVI_CODE = 12,
 	ADD3_CODE = 13,
 	SUB3_CODE = 14,
+	DISP_CODE = 15
 };
 class InstructionOpcodeMap
 {
@@ -46,7 +47,7 @@ public:
 		inopmap["inc"] = INC_CODE;
 		inopmap["dcr"] = DCR_CODE;
 		inopmap["mvi"] = MVI_CODE;
-
+		inopmap["disp"] = DISP_CODE;
 
 		inlengthmap[HLT_CODE] = 1;
 		inlengthmap[ADD_CODE] = 3;
@@ -63,6 +64,7 @@ public:
 		inlengthmap[INC_CODE] = 2;
 		inlengthmap[DCR_CODE] = 2;
 		inlengthmap[MVI_CODE] = 3;
+		inlengthmap[DISP_CODE] = 2;
 
 		inlengthmapstr["hlt"] = 1;
 		inlengthmapstr["add"] = 3;
@@ -79,6 +81,7 @@ public:
 		inlengthmapstr["inc"] = 2;
 		inlengthmapstr["dcr"] = 2;
 		inlengthmapstr["mvi"] = 3;
+		inlengthmapstr["disp"] = 2;
 
 	}
 

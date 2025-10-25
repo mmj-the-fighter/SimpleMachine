@@ -163,6 +163,10 @@ struct Machine{
 				}
 				pc += instrLen;
 				break;
+			case DISP_CODE:
+				std::cout << (int)regs[op1] << "\n";
+				pc += instrLen;
+				break;
 			}
 			
 		} while (true);

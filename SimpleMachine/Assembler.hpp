@@ -246,6 +246,7 @@ private:
 			break;
 		case INC_CODE:
 		case DCR_CODE:
+		case DISP_CODE:
 			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
 			program->WriteCode2Bytes(opcode, regAddr1);
 			break;
@@ -271,6 +272,7 @@ private:
 			regAddr2 = registerTable.Lookup(&operandArray[1][0]);
 			regAddr3 = registerTable.Lookup(&operandArray[2][0]);
 			program->WriteCode4Bytes(opcode,regAddr1, regAddr2, regAddr3);
+			break;
 		}
 		return true;
 	}
