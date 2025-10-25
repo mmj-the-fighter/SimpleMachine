@@ -233,21 +233,26 @@ private:
 		int regAddr1 = 0;
 		int regAddr2 = 0;
 		int regAddr3 = 0;
+		bool found;
 		switch (opcode) {
 		case HLT_CODE:
 			program->WriteCode1Byte(opcode);
 			break;
 		case JNZ_CODE:
 		case JZ_CODE:
-			address = table.Lookup(&operandArray[0][0]);
-			if (address >= 0){
-				program->WriteCode2Bytes(opcode, address);
+			address = table.Lookup(&operandArray[0][0], &found);
+			if (!found) {
+				return false;
 			}
+			program->WriteCode2Bytes(opcode, address);
 			break;
 		case INC_CODE:
 		case DCR_CODE:
 		case DISP_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
+			if (!found) {
+				return false;
+			}
 			program->WriteCode2Bytes(opcode, regAddr1);
 			break;
 		case ADD_CODE:
@@ -255,22 +260,40 @@ private:
 		case MOV_CODE:
 		case LDR_CODE:
 		case STR_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
-			regAddr2 = registerTable.Lookup(&operandArray[1][0]);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
+			if (!found) {
+				return false;
+			}
+			regAddr2 = registerTable.Lookup(&operandArray[1][0], &found);
+			if (!found) {
+				return false;
+			}
 			program->WriteCode3Bytes(opcode, regAddr1, regAddr2);
 			break;
 		case LOAD_CODE:
 		case STORE_CODE:
 		case MVI_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
+			if (!found) {
+				return false;
+			}
 			op2 = atoi(&operandArray[1][0]);
 			program->WriteCode3Bytes(opcode, regAddr1, op2);
 			break;
 		case ADD3_CODE:
 		case SUB3_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0]);
-			regAddr2 = registerTable.Lookup(&operandArray[1][0]);
-			regAddr3 = registerTable.Lookup(&operandArray[2][0]);
+			regAddr1 = registerTable.Lookup(&operandArray[0][0],&found);
+			if (!found) {
+				return false;
+			}
+			regAddr2 = registerTable.Lookup(&operandArray[1][0],&found);
+			if (!found) {
+				return false;
+			}
+			regAddr3 = registerTable.Lookup(&operandArray[2][0],&found);
+			if (!found) {
+				return false;
+			}
 			program->WriteCode4Bytes(opcode,regAddr1, regAddr2, regAddr3);
 			break;
 		}
