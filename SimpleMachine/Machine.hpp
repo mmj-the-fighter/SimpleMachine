@@ -173,13 +173,22 @@ struct Machine{
 	}
 
 	void ShowMemory(){
+		std::cout << "Memory\n";
 		for (int i = 0; i < MAXMEMBYTES; i++){
-			if (i%3 == 0){
-				std::cout << std::endl;
+			if (i%4 == 0){
+				std::cout << '\n';
 			}
-			std::cout << (int)memory[i] << " ";
+			std::cout << (int)memory[i] << "\t";
 		}
-		std::cout << std::endl;
+		std::cout << '\n';
+	}
+
+	void ShowRegisters() {
+		std::cout << "Registers\n";
+		for (int i = 0; i < MAXREGS; i++) {
+			std::cout << "reg" << i << " : " << (int)regs[i] << '\n';
+		}
+		std::cout << '\n';
 	}
 };
 

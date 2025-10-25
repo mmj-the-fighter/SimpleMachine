@@ -50,30 +50,19 @@ public:
 		tfLoader = loader;
 	}
 
-	bool PassForSymbols(){
-		int i = 0, k = 0;
-		int marker = 0;
-		char c, ch;
+	bool PassForSymbols() {
+		int ssm = 0;
 		char buffer[BUFFERLENGTH];
-		unsigned char * byteCode = program->GetByteCodePointer();
-		int lineNum = 1;
+		int lineNumber = 0;
 
-		while ((c = tfLoader->GetTextAt(i)) != '\0') {
-			k = 0;
-			while (k < BUFFERLENGTH-1 && c != '\n' && c != '\0'){
-				buffer[k] = c;
-				++k;
-				++i;
-				c = tfLoader->GetTextAt(i);
-			}
-			if (k >= BUFFERLENGTH-1){
+		while (true) {
+			tfLoader->GetNonEmptyLine(buffer, BUFFERLENGTH, &ssm, &lineNumber);
+			if (!StoreSymbolIfAny(buffer)) {
 				return false;
 			}
-			buffer[k] = '\0';
-			if (!StoreSymbolIfAny(buffer)){
-				return false;
+			if (tfLoader->GetTextAt(ssm) == '\0') {
+				break;
 			}
-			++i;
 		}
 		return true;
 	}

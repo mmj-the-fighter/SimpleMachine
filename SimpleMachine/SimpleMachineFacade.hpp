@@ -29,6 +29,8 @@ public:
 			return;
 		}
 		
+		textFileLoader.FilterComments();
+
 		program.Clear();
 
 		if (!assembler.Translate()){
@@ -37,6 +39,8 @@ public:
 		
 		machine.LoadProgram(0, &program);
 		machine.Execute();
+		machine.ShowMemory();
+		machine.ShowRegisters();
 	}
 
 	void SetCell(unsigned int address, unsigned int content){

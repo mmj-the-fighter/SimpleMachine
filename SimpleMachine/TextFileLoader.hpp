@@ -100,6 +100,28 @@ public:
 		*ssm = i;
 		return c != '\0';
 	}
+
+	void FilterComments() {
+		int i = 0;
+		int j = 0;
+		bool comment = false;
+		char c;
+
+		while ((c = buffer[i]) != '\0') {
+			if (c == '#') {
+				comment = true;
+			}
+			else if (c == '\n' && comment) {
+				comment = false;
+			}
+			buffer[j] = buffer[i];
+			if (!comment) {
+				++j;
+			}
+			++i;
+		}
+		buffer[j] = '\0';
+	}
 };
 
 
