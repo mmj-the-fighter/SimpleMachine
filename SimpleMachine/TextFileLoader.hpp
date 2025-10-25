@@ -68,6 +68,38 @@ public:
 		std::cout << buffer << std::endl;
 		return true;
 	}
+
+	bool GetNonEmptyLine(char* buf, int bufLen, int* ssm, int* lineNumber) {
+		int i = *ssm;
+		int k;
+		char c;
+		int validCharCount;
+		do
+		{
+			validCharCount = 0;
+			k = 0;
+			while ((c = GetTextAt(i)) != '\0')
+			{
+				if (k >= bufLen - 1) {
+					return false;
+				}
+				if (c == '\n') {
+					++*lineNumber;
+					++i;
+					break;
+				}
+				if (isalnum(c)) {
+					++validCharCount;
+				}
+				buf[k] = c;
+				++k;
+				++i;
+			}
+		} while (c != '\0' && validCharCount == 0);
+		buf[k] = '\0';
+		*ssm = i;
+		return c != '\0';
+	}
 };
 
 

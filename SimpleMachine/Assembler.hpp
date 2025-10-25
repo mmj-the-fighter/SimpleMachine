@@ -80,33 +80,26 @@ public:
 
 
 	bool Translate(){
-		int i = 0, k = 0;
-		int marker = 0;
-		char c, ch;
+		int ssm = 0;
 		char buffer[BUFFERLENGTH];
-		unsigned char * byteCode = program->GetByteCodePointer();
-		program->Clear();
+		int lineNumber = 0;
+		
 		if (!PassForSymbols()){
+			std::cout << "Pass for symbols failed!\n";
 			return false;
 		}
+
 		program->Clear();
-		while ((c = tfLoader->GetTextAt(i)) != '\0'){
-			k = 0;
-			while (k < BUFFERLENGTH-1 && c != '\n' && c != '\0'){
-				buffer[k] = c;
-				++k;
-				++i;
-				c = tfLoader->GetTextAt(i);
-			}
-			if (k >= BUFFERLENGTH - 1){
+
+		while (true) {
+			tfLoader->GetNonEmptyLine(buffer, BUFFERLENGTH, &ssm, &lineNumber);
+			if (!AssembleByteCode(buffer)) {
+				std::cout << "Invalid instruction:" << buffer << "\nat line# " << lineNumber << "\n";
 				return false;
 			}
-			buffer[k] = '\0';
-			if (!AssembleByteCode(buffer)){
-				std::cout << "Invalid instruction:"<< buffer << "\n";
-				return false;
+			if (tfLoader->GetTextAt(ssm) == '\0') {
+				break;
 			}
-			++i;
 		}
 		return true;
 	}
