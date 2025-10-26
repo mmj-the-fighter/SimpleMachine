@@ -24,11 +24,14 @@
 //	return 0;
 //}
 
-static void string_copy(char* dst, const char* src) {
-	while ((*dst = *src) != '\0') {
+static void string_copy(char* dst, const char* src, int dstBufSize) {
+	int i = 0;
+	while (i < dstBufSize-1 && (*dst = *src) != '\0') {
+		++i;
 		++src;
 		++dst;
 	}
+	*dst = '\0';
 }
 
 int main(int argc, char* argv[])
@@ -36,12 +39,12 @@ int main(int argc, char* argv[])
 	char asmFile[256];
 	char ramFile[256];
 	if (argc != 3) {
-		string_copy(asmFile, "program.asm");
-		string_copy(ramFile, "mem.ram");
+		string_copy(asmFile, "program.asm", 256);
+		string_copy(ramFile, "mem.ram", 256);
 	}
 	else {
-		string_copy(asmFile, argv[1]);
-		string_copy(ramFile, argv[2]);
+		string_copy(asmFile, argv[1], 256);
+		string_copy(ramFile, argv[2], 256);
 	}
 	SimpleMachineFacade sm;
 	sm.InitMemoryFromRamFile(ramFile);
