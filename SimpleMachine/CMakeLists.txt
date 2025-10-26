@@ -12,6 +12,7 @@ set(SOURCES
 set(HEADERS
     SimpleMachineFacade.hpp
     TextFileLoader.hpp
+	RamFileLoader.hpp
     SymbolTable.hpp
     InstructionOpcodeMap.hpp
     Program.hpp
