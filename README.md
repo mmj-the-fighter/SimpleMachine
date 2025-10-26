@@ -7,7 +7,7 @@ It is a computer with the following specifications:
 
 ## Supported Instructions
 
-The Simple Machine supports the following instructions:
+The Simple Machine supports the following 16 instructions:
 
 - **`hlt`**: Stop execution
 - **`add`**: Add the contents of two registers and store the result in the 0th register
@@ -24,6 +24,7 @@ The Simple Machine supports the following instructions:
 - **`inc`**: Increment a register by one
 - **`dcr`**: Decrement a register by one
 - **`mvi`**: Store a byte literal in a register
+- **`disp`**: Print number from the provided register
 
 ## Project Overview
 
