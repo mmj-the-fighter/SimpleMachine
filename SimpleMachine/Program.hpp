@@ -11,14 +11,17 @@ private:
 	unsigned char byteCode[MAXMEMBYTES];
 	int currentMarker;
 	InstructionOpcodeMap *imap;
+	int loadingOffset;
 public:
 	Program()
 	{
+		loadingOffset = 0;
 		currentMarker = 0;
 		imap = NULL;
 	}
 	Program(InstructionOpcodeMap *map)
 	{
+		loadingOffset = 0;
 		currentMarker = 0;
 		imap = map;
 	}
@@ -104,6 +107,15 @@ public:
 	unsigned char* GetByteCodePointer() {
 		return &byteCode[0];
 	}
+
+	void SetLoadingOffset(int offset) {
+		loadingOffset = offset;
+	}
+
+	int GetLoadingOffset() {
+		return loadingOffset;
+	}
+
 	
 };
 

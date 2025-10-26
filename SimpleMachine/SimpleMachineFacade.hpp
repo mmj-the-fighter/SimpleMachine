@@ -38,7 +38,7 @@ public:
 
 	}
 	void ExecuteProgram() {
-		machine.LoadProgram(0, &program);
+		machine.LoadProgram(8, &program);
 		machine.Execute();
 	}
 

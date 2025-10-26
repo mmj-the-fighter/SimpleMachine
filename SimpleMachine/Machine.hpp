@@ -26,13 +26,14 @@ struct Machine{
 		int codeLength = program->GetCurrentMarker();
 		memcpy(memory + startingAddress, code, codeLength);
 		pc = startingAddress;
+		program->SetLoadingOffset(startingAddress);
 	}
 
 	void Execute() {
 		if (NULL == program) {
 			return;
 		}
-		
+		int loadingOffset = program->GetLoadingOffset();
 
 		do{
 			unsigned char opcode = memory[pc];
@@ -85,7 +86,7 @@ struct Machine{
 				break;
 			case JNZ_CODE:
 				if (!zeroFlag) {
-					pc = op1;
+					pc = op1+loadingOffset;
 				}
 				else{
 					pc += instrLen;
@@ -93,7 +94,7 @@ struct Machine{
 				break;
 			case JZ_CODE:
 				if (zeroFlag) {
-					pc = op1;
+					pc = op1+loadingOffset;
 				}
 				else{
 					pc += instrLen;
