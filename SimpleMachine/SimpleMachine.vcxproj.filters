@@ -36,6 +36,9 @@
     <ClInclude Include="SymbolTable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RamFileLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="program.asm">
