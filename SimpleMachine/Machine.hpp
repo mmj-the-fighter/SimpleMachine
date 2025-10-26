@@ -175,7 +175,7 @@ struct Machine{
 	void ShowMemory(){
 		std::cout << "Memory\n";
 		for (int i = 0; i < MAXMEMBYTES; i++){
-			if (i%4 == 0){
+			if (i!=0 && i%4 == 0){
 				std::cout << '\n';
 			}
 			std::cout << (int)memory[i] << "\t";

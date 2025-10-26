@@ -65,7 +65,7 @@ public:
 		std::transform(str.begin(), str.end(), buffer, ::tolower);
 		buffer[bufferLength] = '\0';
 
-		std::cout << buffer << std::endl;
+		//std::cout << buffer << std::endl;
 		return true;
 	}
 
