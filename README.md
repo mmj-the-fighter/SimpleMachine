@@ -1,10 +1,13 @@
 # Simple Machine
-Simple machine simulator built for learning purpose.  
-It is a computer with the following specifications: 
 
+Simple machine simulator built for learning purpose.  
+[Demo on YouTube](https://www.youtube.com/watch?v=FoIajC5jvm0)  
+It is a fictional computer with the following specifications: 
 - **Registers**: 16 registers, (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p), each 1 byte wide
-- **Memory**: Total of 256 bytes
+- **Memory**: Sequential array of 256 unsigned char bytes
+
 ## Supported Instruction Formats
+
 - [opcode]
 - [opcode][operand1]
 - [opcode][operand1][operand2]
