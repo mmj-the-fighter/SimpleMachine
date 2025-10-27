@@ -33,5 +33,5 @@ The Simple Machine supports the following 16 instructions:
 
 ## Project Overview
 
-This project serves as an assembler and simulator for the Simple Machine.
+This project serves as an assembler, disassembler and simulator for the Simple Machine.
 
