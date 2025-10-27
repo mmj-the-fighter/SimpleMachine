@@ -7,6 +7,7 @@
 #include "Program.hpp"
 #include "Machine.hpp"
 #include "Assembler.hpp"
+#include "Disassembler.hpp"
 
 class SimpleMachineFacade
 {
@@ -16,11 +17,14 @@ class SimpleMachineFacade
 	Machine machine;
 	Program program;
 	Assembler assembler;
+	Disassembler disassembler;
+	int loadingOffset;
 
 public:
 	SimpleMachineFacade(){
 		program.SetInstructionOpcodeMap(&opcodeMap);
 		assembler.Set(&textFileLoader, &program);
+		loadingOffset = 0;
 	}
 
 	void TranslateAssembly(const char* asmFileName) {
@@ -38,8 +42,14 @@ public:
 
 	}
 	void ExecuteProgram() {
-		machine.LoadProgram(8, &program);
+		loadingOffset = 8;
+		machine.LoadProgram(loadingOffset, &program);
 		machine.Execute();
+	}
+
+	void Disassemble() {
+		disassembler.Set(&machine, loadingOffset);
+		disassembler.Translate();
 	}
 
 	void SetCell(unsigned int address, unsigned int content){
@@ -61,7 +71,6 @@ public:
 		int loc;
 		int value;
 		char buffer[BUFFERLENGTH];
-
 
 		while (true) {
 			ramFileLoader.GetNonEmptyLine(buffer, BUFFERLENGTH, &i, &lineNumber);

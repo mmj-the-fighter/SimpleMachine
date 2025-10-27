@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra
 
-SOURCES = sm.cpp SimpleMachineFacade.hpp TextFileLoader.hpp RamFileLoader.hpp SymbolTable.hpp InstructionOpcodeMap.hpp Program.hpp Assembler.hpp Machine.hpp
+SOURCES = sm.cpp SimpleMachineFacade.hpp TextFileLoader.hpp RamFileLoader.hpp SymbolTable.hpp InstructionOpcodeMap.hpp Program.hpp Assembler.hpp Machine.hpp Disassembler.hpp OpcodeInstructionMap.hpp RevSymbolTable.hpp
 EXECUTABLE = sm
 
 all: $(EXECUTABLE)

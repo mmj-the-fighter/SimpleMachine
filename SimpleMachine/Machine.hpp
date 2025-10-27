@@ -20,6 +20,26 @@ struct Machine{
 		program = NULL;
 	}
 
+	inline bool IsValidAddres(int address) {
+		if (address >= MAXMEMBYTES || address < 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	unsigned char GetByteAt(int address, bool* validAccess) {
+		if (address >= MAXMEMBYTES || address < 0) {
+			*validAccess = false;
+			return 0;
+		}
+		else {
+			*validAccess = true;
+			return memory[address];
+		}
+	}
+
 	void LoadProgram(int startingAddress, Program* aProgram){
 		program = aProgram;
 		unsigned char* code = program->GetByteCodePointer();
