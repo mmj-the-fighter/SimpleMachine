@@ -1,40 +1,71 @@
 # Simple Machine
 
-Simple machine simulator built for learning purpose.  
-[Demo on YouTube](https://www.youtube.com/watch?v=FoIajC5jvm0)  
-It is a fictional computer with the following specifications: 
-- **Registers**: 16 registers, (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p), each 1 byte wide
-- **Memory**: Sequential array of 256 unsigned char bytes
+A simple fictional computer simulator built for educational purposes.  
+It acts as a minimal CPU with a basic assembler, disassembler, and simulator. 
+[Demo on YouTube: https://www.youtube.com/watch?v=FoIajC5jvm0](https://www.youtube.com/watch?v=FoIajC5jvm0)   
+
+---
+
+## System Specifications
+
+- **Registers**: 16 general-purpose registers (`A`–`P`), each 1 byte wide  
+- **Memory**: 256 bytes of addressable memory (`0x00`–`0xFF`)  
+- **Data Width**: 8-bit operations  
+- **Instruction Lengths**: Variable (1–4 bytes)
+
+---
 
 ## Supported Instruction Formats
 
-- [opcode]
-- [opcode][operand1]
-- [opcode][operand1][operand2]
-- [opcode][operand1][operand2][operand3]
+| Format | Description |
+|:-------|:-------------|
+| `[opcode]` | No operands |
+| `[opcode][operand1]` | Single operand instruction |
+| `[opcode][operand1][operand2]` | Two-operand instruction |
+| `[opcode][operand1][operand2][operand3]` | Three-operand instruction |
+
+---
 
 ## Supported Instructions
 
-The Simple Machine supports the following 16 instructions:
+| Mnemonic | Description | Example |
+|:----------|:-------------|:---------|
+| **HLT** | Stop execution | `HLT` |
+| **ADD** | Add contents of two registers and store in register `A` | `ADD B C` |
+| **SUB** | Subtract contents of operand2 from operand1, store in `A` | `SUB B C` |
+| **ADD3** | Add two registers and store result in operand1 | `ADD3 A B C` |
+| **SUB3** | Subtract operand3 from operand2, store in operand1 | `SUB3 A B C` |
+| **JNZ** | Jump if zero flag **not** set | `JNZ LOOP` |
+| **JZ** | Jump if zero flag **is** set | `JZ LOOP` |
+| **MOV** | Copy value from operand2 to operand1 | `MOV A B` |
+| **LOAD** | Load value from memory address into register | `LOAD A 100` |
+| **LDR** | Load from memory address contained in register(operand2) | `LDR A B` |
+| **STORE** | Store register value to a specific memory address | `STORE A 200` |
+| **STR** | Store register value to memory address in another register(operand2) | `STR A B` |
+| **INC** | Increment a register | `INC B` |
+| **DCR** | Decrement a register | `DCR C` |
+| **MVI** | Move immediate value into register | `MVI A 20` |
+| **DISP** | Display the numeric value of a register | `DISP A` |
 
-- **`hlt`**: Stop execution. e.g. `HLT`
-- **`add`**: Add the contents of two registers and store the result in register `a`. e.g. `ADD B C`
-- **`sub`**: Subtract the content of operand2 register from the content of operand1 register and store the result in register 'a'. e.g. `SUB B C`
-- **`add3`**: Add the contents of two registers and store the result in the specified register at operand1. eg. `ADD3 A B C`
-- **`sub3`**: Subtract the content of operand3 register from the content of operand2 register and store the result in the specified register at operand1. `SUB3 A B C`
-- **`jnz`**: Jump to a different memory location specified at operand1 if the last operation did not set the zero flag. `JNZ LOOP`
-- **`jz`**: Jump to a different memory location specified at operand2 if the last operation set the zero flag. `JZ LOOP`
-- **`mov`**: Copy a value from a source register(operand2) to a destination register(operand1). `MOV A B`
-- **`load`**: Load a value from a memory location(operand2) into a destination register(operand1). `LOAD A 100`
-- **`ldr`**: Load a value from a memory location specified by a register(operand2) into a destination register(operand1). `LDR A B`
-- **`store`**: Store a value from a register(operand1) to a destination memory location(operand2). `STORE A 200`
-- **`str`**: Store a value from a register(operand1) to a memory location specified by another register(operand1). `STR A B`
-- **`inc`**: Increment a register by one. `INC B`
-- **`dcr`**: Decrement a register by one. `DCR C`
-- **`mvi`**: Store a byte literal in a register. `MVI A 20`
-- **`disp`**: Print number from the provided register. `DISP A`
+---
 
 ## Project Overview
 
-This project serves as an assembler, disassembler and simulator for the Simple Machine.
+The project provides:
+- **Assembler**: Converts assembly-like source into binary machine code  
+- **Disassembler**: Converts machine code back to assembly form  
+- **Simulator**: Executes instructions on a virtual machine model
+
+---
+
+## Example Program
+
+```asm
+MVI A 10
+MVI B 5
+ADD3 C A B
+DISP C
+HLT
+```
+
 
