@@ -55,10 +55,6 @@ public:
 		std::string str((std::istreambuf_iterator<char>(in)),
 			std::istreambuf_iterator<char>());
 		DestroyBuffer();
-		bufferLength = str.size();
-		buffer = new char[bufferLength + 1];
-		const char* pc = str.c_str();
-		int i = 0;
 
 		bufferLength = str.size();
 		buffer = new char[bufferLength + 1];
