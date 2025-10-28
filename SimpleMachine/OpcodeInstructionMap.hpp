@@ -4,9 +4,9 @@
 #include <map>
 #include <cstring>
 #include <string>
-#include "instructionopcodemap.hpp"
+#include "InstructionOpcodeMap.hpp"
 
-
+//for disassmbly
 class OpcodeInstructionMap
 {
 private:
