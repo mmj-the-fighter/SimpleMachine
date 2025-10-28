@@ -21,6 +21,9 @@ set(HEADERS
 	Disassembler.hpp
     OpcodeInstructionMap.hpp
 	RevSymbolTable.hpp
+	Profiler.hpp
+	RegisterHelper.hpp
+	TextPrinter.hpp
 )
 
 add_executable(sm ${SOURCES} ${HEADERS})
