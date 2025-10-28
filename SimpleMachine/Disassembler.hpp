@@ -7,52 +7,37 @@
 #include "Machine.hpp"
 #include "RevSymbolTable.hpp"
 #include "CommonDefs.h"
+#include "Profiler.hpp"
+#include "TextPrinter.hpp"
+#include "RegisterHelper.hpp"
 
 class Disassembler
 {
 	Machine* machine;
 	int loadingOffset;
 	RevSymbolTable addressLabelTable;
-	RevSymbolTable revRegisterTable;
 	OpcodeInstructionMap opcodeInstructionMap;
+	TextPrinter printer;
+	RegisterHelper regHelper;
+	std::ostringstream ss;
 public:
 	Disassembler(Machine* m, int offset) {
 		machine = m;
 		loadingOffset = offset;
-		InitRevRegisterTable();
 	}
 
 	Disassembler() {
 		machine = NULL;
 		loadingOffset = 0;
-		InitRevRegisterTable();
 	}
 
 	std::string GenLabel(int count) {
-		std::ostringstream ss;
+		ss.str("");
+		ss.clear();
 		ss << "Label" << count;
 		return ss.str();
 	}
 
-	void InitRevRegisterTable()
-	{
-		revRegisterTable.AddKeyValue(0, "A");
-		revRegisterTable.AddKeyValue(1, "B");
-		revRegisterTable.AddKeyValue(2, "C");
-		revRegisterTable.AddKeyValue(3, "D");
-		revRegisterTable.AddKeyValue(4, "E");
-		revRegisterTable.AddKeyValue(5, "F");
-		revRegisterTable.AddKeyValue(6, "G");
-		revRegisterTable.AddKeyValue(7, "H");
-		revRegisterTable.AddKeyValue(8, "I");
-		revRegisterTable.AddKeyValue(9, "J");
-		revRegisterTable.AddKeyValue(10, "K");
-		revRegisterTable.AddKeyValue(11, "L");
-		revRegisterTable.AddKeyValue(12, "M");
-		revRegisterTable.AddKeyValue(13, "N");
-		revRegisterTable.AddKeyValue(14, "O");
-		revRegisterTable.AddKeyValue(15, "P");
-	}
 
 	void Set(Machine* m, int offset) {
 		machine = m;
@@ -60,6 +45,7 @@ public:
 	}
 
 	bool PassForSymbols() {
+		util::ProfilerScope prof(311);
 		int address = loadingOffset;
 		int labelCount = 0;
 
@@ -107,30 +93,32 @@ public:
 		bool validAccess;
 		bool foundInstr;
 		bool foundLabel;
-		bool foundRegister;
 		bool badExeFormat = false;
 		bool badAccess = false;
 		int badLocation = 0;
-		
+
 		//machine->memory[12] = 67;
 
 		if (!PassForSymbols()) {
 			return false;
 		}
 
-		std::cout << "Disassembly:\n";
+		printer.AddConstCString("Disassembly:\n");
 		while (!hltFound) {
 			std::string instr;
-			unsigned char operand1;
-			unsigned char operand2;
-			unsigned char operand3;
+			char reg;
+			unsigned char operand;
+			unsigned char operands[3];
+			RegisterPair regPair;
+			RegisterTriplet regTriplet;
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
 			if (!validAccess) {
 				badLocation = address;
 				badAccess = true;
 				goto exit;
 			}
-			std::string* pReg;
+			//std::string* pReg;
+
 			std::string* pInstr = opcodeInstructionMap.GetInstruction(opcode, &foundInstr);
 			if (foundInstr) {
 				if (!machine->IsValidAddres(address - loadingOffset)) {
@@ -140,23 +128,32 @@ public:
 				}
 				std::string* pLabel = addressLabelTable.Lookup(address - loadingOffset, &foundLabel);
 				if (foundLabel) {
-					std::cout << *pLabel << ":\n";
+					//std::cout << *pLabel << ":\n";
+					printer.AddString(*pLabel);
+					printer.AddChar(':');
+					printer.AddChar('\n');
 				}
 
 				switch (opcode) {
-				case HLT_CODE:std::cout << "HLT\n";
+				case HLT_CODE:
+					//std::cout << "HLT\n";
+					printer.AddConstCString("HLT\n");
 					break;
 				case JNZ_CODE:
 				case JZ_CODE:
-					operand1 = machine->GetByteAt(address + 1, &validAccess);
+					operand = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					pLabel = addressLabelTable.Lookup(operand1, &foundLabel);
+					pLabel = addressLabelTable.Lookup(operand, &foundLabel);
 					if (foundLabel) {
-						std::cout << *pInstr << " " << *pLabel << "\n";
+						//std::cout << *pInstr << " " << *pLabel << "\n";
+						printer.AddString(*pInstr);
+						printer.AddChar(' ');
+						printer.AddString(*pLabel);
+						printer.AddChar('\n');
 					}
 					else {
 						badExeFormat = true;
@@ -167,15 +164,20 @@ public:
 				case INC_CODE:
 				case DCR_CODE:
 				case DISP_CODE:
-					operand1 = machine->GetByteAt(address + 1, &validAccess);
+					operand = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					pReg = revRegisterTable.Lookup(operand1, &foundRegister);
-					if (foundRegister) {
-						std::cout << *pInstr << " " << *pReg << "\n";
+					//pReg = revRegisterTable.Lookup(operand1, &foundRegister);
+					reg = regHelper.FindRegisterChar(operand);
+					if (reg != '\0') {
+						//std::cout << *pInstr << " " << *pReg << "\n";
+						printer.AddString(*pInstr);
+						printer.AddChar(' ');
+						printer.AddChar(reg);
+						printer.AddChar('\n');
 					}
 					else {
 						badExeFormat = true;
@@ -188,110 +190,91 @@ public:
 				case MOV_CODE:
 				case LDR_CODE:
 				case STR_CODE:
-					operand1 = machine->GetByteAt(address + 1, &validAccess);
+					validAccess = machine->GetAtMost4Bytes(address + 1, 2, &operands[0]);
+					//operand1 = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					pReg = revRegisterTable.Lookup(operand1, &foundRegister);
-					if (foundRegister) {
-						std::cout << *pInstr << " " << *pReg;
-					}
-					else {
-						badExeFormat = true;
+					validAccess = regHelper.FindRegisterPair(operands[0], operands[1], &regPair);
+					if (!validAccess) {
+						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					operand2 = machine->GetByteAt(address + 2, &validAccess);
-					if (!validAccess) {
-						badAccess = true;
-						badLocation = address + 2;
-						goto exit;
-					}
-					pReg = revRegisterTable.Lookup(operand2, &foundRegister);
-					if (foundRegister) {
-						std::cout << " " << *pReg << "\n";
-					}
-					else {
-						badExeFormat = true;
-						badLocation = address + 2;
-						goto exit;
-					}
+					//std::cout << *pInstr << " " << *pReg;
+					printer.AddString(*pInstr);
+					printer.AddChar(' ');
+					printer.AddChar(regPair.r1);
+					//std::cout << " " << *pReg << "\n";
+					printer.AddChar(' ');
+					printer.AddChar(regPair.r2);
+					printer.AddChar('\n');
 					break;
 				case LOAD_CODE:
 				case STORE_CODE:
 				case MVI_CODE:
-					operand1 = machine->GetByteAt(address + 1, &validAccess);
+					//operand1 = machine->GetByteAt(address + 1, &validAccess);
+					validAccess = machine->GetAtMost4Bytes(address + 1, 2, &operands[0]);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					pReg = revRegisterTable.Lookup(operand1, &foundRegister);
-					if (foundRegister) {
-						std::cout << *pInstr << " " << *pReg;
+					//pReg = revRegisterTable.Lookup(operand1, &foundRegister);
+					reg = regHelper.FindRegisterChar(operands[0]);
+					if (reg != '\0') {
+						//std::cout << *pInstr << " " << *pReg;
+						printer.AddString(*pInstr);
+						printer.AddChar(' ');
+						printer.AddChar(reg);
 					}
 					else {
 						badExeFormat = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					operand2 = machine->GetByteAt(address + 2, &validAccess);
+					/*operand2 = machine->GetByteAt(address + 2, &validAccess);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 2;
 						goto exit;
-					}
-					std::cout << " " << (int)operand2 << "\n";
+					}*/
+					//std::cout << " " << (int)operand2 << "\n";
+					printer.AddChar(' ');
+					printer.AddInt((int)operands[1]);
+					printer.AddChar('\n');
 					break;
 				case ADD3_CODE:
 				case SUB3_CODE:
-					operand1 = machine->GetByteAt(address + 1, &validAccess);
+					validAccess = machine->GetAtMost4Bytes(address + 1, 3, &operands[0]);
 					if (!validAccess) {
 						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					pReg = revRegisterTable.Lookup(operand1, &foundRegister);
-					if (foundRegister) {
-						std::cout << *pInstr << " " << *pReg;
-					}
-					else {
-						badExeFormat = true;
+					validAccess = regHelper.FindRegisterTriplet(
+						operands[0], 
+						operands[1], 
+						operands[2], 
+						& regTriplet);
+					if (!validAccess) {
+						badAccess = true;
 						badLocation = address + 1;
 						goto exit;
 					}
-					operand2 = machine->GetByteAt(address + 2, &validAccess);
-					if (!validAccess) {
-						badAccess = true;
-						badLocation = address + 2;
-						goto exit;
-					}
-					pReg = revRegisterTable.Lookup(operand2, &foundRegister);
-					if (foundRegister) {
-						std::cout << " " << *pReg;
-					}
-					else {
-						badExeFormat = true;
-						badLocation = address + 2;
-						goto exit;
-					}
-					operand3 = machine->GetByteAt(address + 3, &validAccess);
-					if (!validAccess) {
-						badAccess = true;
-						badLocation = address + 3;
-						goto exit;
-					}
-					pReg = revRegisterTable.Lookup(operand3, &foundRegister);
-					if (foundRegister) {
-						std::cout << " " << *pReg << "\n";
-					}
-					else {
-						badExeFormat = true;
-						badLocation = address + 3;
-						goto exit;
-					}
+					//std::cout << *pInstr << " " << *pReg;
+					printer.AddString(*pInstr);
+					printer.AddChar(' ');
+					printer.AddChar(regTriplet.r1);
+					//std::cout << " " << *pReg;
+					printer.AddChar(' ');
+					printer.AddChar(regTriplet.r2);
+					//std::cout << " " << *pReg << "\n";
+					printer.AddChar(' ');
+					printer.AddChar(regTriplet.r3);
+					printer.AddChar('\n');
 					break;
 				}
 				address += opcodeInstructionMap.GetInstructionLengthForOpcode(opcode);
@@ -307,14 +290,23 @@ public:
 		}
 	exit:
 		if (badExeFormat) {
-			std::cout << "bad exe format at address: "<<badLocation<<"\n";
+			//std::cout << "bad exe format at address: " << badLocation << "\n";
+			printer.AddConstCString("bad exe format at address: ");
+			printer.AddInt(badLocation);
+			printer.AddChar('\n');
+			printer.PrintAndFlush();
 			return false;
 		}
 		else if (badAccess) {
-			std::cout << "unexpected access error for location: " << badLocation << "\n";
+			//std::cout << "unexpected access error for location: " << badLocation << "\n";
+			printer.AddConstCString("unexpected access error for location: ");
+			printer.AddInt(badLocation);
+			printer.AddChar('\n');
+			printer.PrintAndFlush();
 			return false;
 		}
 		else {
+			printer.PrintAndFlush();
 			return true;
 		}
 	}

@@ -8,6 +8,7 @@
 #include "Machine.hpp"
 #include "Assembler.hpp"
 #include "Disassembler.hpp"
+#include "Profiler.hpp"
 
 class SimpleMachineFacade
 {
@@ -28,6 +29,7 @@ public:
 	}
 
 	void TranslateAssembly(const char* asmFileName) {
+		util::ProfilerScope prof(110);
 		bool res = textFileLoader.LoadTextFromFile(asmFileName);
 
 		if (!res) {
@@ -42,12 +44,14 @@ public:
 
 	}
 	void ExecuteProgram() {
+		util::ProfilerScope prof(210);
 		loadingOffset = 8;
 		machine.LoadProgram(loadingOffset, &program);
 		machine.Execute();
 	}
 
 	void Disassemble() {
+		util::ProfilerScope prof(310);
 		disassembler.Set(&machine, loadingOffset);
 		disassembler.Translate();
 	}

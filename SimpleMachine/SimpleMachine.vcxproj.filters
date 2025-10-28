@@ -48,6 +48,15 @@
     <ClInclude Include="OpcodeInstructionMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextPrinter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterHelper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="program.asm">

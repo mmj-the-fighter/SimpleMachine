@@ -132,12 +132,15 @@
     <ClInclude Include="InstructionOpcodeMap.hpp" />
     <ClInclude Include="Machine.hpp" />
     <ClInclude Include="OpcodeInstructionMap.hpp" />
+    <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="RamFileLoader.hpp" />
+    <ClInclude Include="RegisterHelper.hpp" />
     <ClInclude Include="RevSymbolTable.hpp" />
     <ClInclude Include="SimpleMachineFacade.hpp" />
     <ClInclude Include="SymbolTable.hpp" />
     <ClInclude Include="TextFileLoader.hpp" />
+    <ClInclude Include="TextPrinter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="program.asm" />

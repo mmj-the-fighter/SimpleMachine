@@ -1,3 +1,4 @@
+#include "Profiler.hpp"
 #include "SimpleMachineFacade.hpp"
 
 static void string_copy(char* dst, const char* src, int dstBufSize) {
@@ -8,6 +9,18 @@ static void string_copy(char* dst, const char* src, int dstBufSize) {
 		++dst;
 	}
 	*dst = '\0';
+}
+
+void Run(char* asmFile, char* ramFile) {
+	
+	SimpleMachineFacade sm;
+	sm.InitMemoryFromRamFile(ramFile);
+	sm.TranslateAssembly(asmFile);
+	sm.ExecuteProgram();
+	std::cout << "\n";
+	sm.ShowMachine();
+	std::cout << "\n";
+	sm.Disassemble();
 }
 
 int main(int argc, char* argv[])
@@ -22,13 +35,7 @@ int main(int argc, char* argv[])
 		string_copy(asmFile, argv[1], 256);
 		string_copy(ramFile, argv[2], 256);
 	}
-	SimpleMachineFacade sm;
-	sm.InitMemoryFromRamFile(ramFile);
-	sm.TranslateAssembly(asmFile);
-	sm.ExecuteProgram();
-	std::cout << "\n";
-	sm.ShowMachine();
-	std::cout << "\n";
-	sm.Disassemble();
+	Run(asmFile, ramFile);
+	util::Profiler::GetInstance().Print();
 	return 0;
 }
