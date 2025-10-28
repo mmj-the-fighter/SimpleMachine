@@ -2,6 +2,7 @@
 #define _MACHINE_
 
 #include <iostream>
+#include <cstdlib>
 #include "InstructionOpcodeMap.hpp"
 #include "Program.hpp"
 #include "CommonDefs.h"
@@ -38,6 +39,49 @@ struct Machine{
 			*validAccess = true;
 			return memory[address];
 		}
+	}
+
+	bool GetBytes(int startAddress, int numberOfBytes, unsigned char* bytes) {
+		if (startAddress < 0  || startAddress >= MAXMEMBYTES || numberOfBytes <= 0) {
+			return false;
+		}
+		int endAddress = startAddress + numberOfBytes - 1;
+		if (endAddress >= MAXMEMBYTES) {
+			return false;
+		}
+		memcpy(bytes, &memory[startAddress], numberOfBytes);
+		return true;
+	}
+
+	inline bool GetAtMost4Bytes(int startAddress, int numberOfBytes, unsigned char* bytes) {
+		if (startAddress < 0 || startAddress >= MAXMEMBYTES || numberOfBytes <= 0 || numberOfBytes > 4) {
+			return false;
+		}
+		int endAddress = startAddress + numberOfBytes - 1;
+		if (endAddress >= MAXMEMBYTES) {
+			return false;
+		}
+		switch (numberOfBytes) {
+		case 1:
+			bytes[0] = memory[startAddress];
+			break;
+		case 2:
+			bytes[0] = memory[startAddress];
+			bytes[1] = memory[startAddress+1];
+			break;
+		case 3:
+			bytes[0] = memory[startAddress];
+			bytes[1] = memory[startAddress + 1];
+			bytes[2] = memory[startAddress + 2];
+			break;
+		case 4:
+			bytes[0] = memory[startAddress];
+			bytes[1] = memory[startAddress + 1];
+			bytes[2] = memory[startAddress + 2];
+			bytes[3] = memory[startAddress + 3];
+			break;
+		}
+		return true;
 	}
 
 	void LoadProgram(int startingAddress, Program* aProgram){
