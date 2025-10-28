@@ -4,6 +4,7 @@
 #include "InstructionOpcodeMap.hpp"
 #include "SymbolTable.hpp"
 #include "CommonDefs.h"
+#include "RegisterHelper.hpp"
 
 class Program
 {
@@ -18,12 +19,18 @@ public:
 		loadingOffset = 0;
 		currentMarker = 0;
 		imap = NULL;
+		for (int i = 0; i < MAXMEMBYTES; i++) {
+			byteCode[i] = 0;
+		}
 	}
 	Program(InstructionOpcodeMap *map)
 	{
 		loadingOffset = 0;
 		currentMarker = 0;
 		imap = map;
+		for (int i = 0; i < MAXMEMBYTES; i++) {
+			byteCode[i] = 0;
+		}
 	}
 
 	void SetInstructionOpcodeMap(InstructionOpcodeMap *map){
@@ -49,11 +56,12 @@ public:
 		return found;
 	}
 
-	int GetInstructionLength(unsigned char opcode) {
-		return imap->GetInstructionLengthForOpcode(opcode);
+	inline int GetInstructionLength(unsigned char opcode) {
+		return imap->GetInstructionLengthForOpcodeFast(opcode);
+		//return imap->GetInstructionLengthForOpcode(opcode);
 	}
 
-	void WriteInstructionFirstPass(char *opcodeStr){
+	inline void WriteInstructionFirstPass(char *opcodeStr){
 		int instrLen = imap->GetInstructionLengthForOpcodeStr(opcodeStr);
 		if (currentMarker >= MAXMEMBYTES - instrLen){
 			return;
@@ -61,7 +69,7 @@ public:
 		currentMarker = currentMarker + instrLen;
 	}
 
-	void WriteCode1Byte(unsigned char byte1){
+	inline void WriteCode1Byte(unsigned char byte1){
 		if (currentMarker >= MAXMEMBYTES - 1){
 			return;
 		}
@@ -69,7 +77,7 @@ public:
 		currentMarker += 1;
 	}
 
-	void WriteCode2Bytes(unsigned char byte1, unsigned char byte2){
+	inline void WriteCode2Bytes(unsigned char byte1, unsigned char byte2){
 		if (currentMarker >= MAXMEMBYTES - 2){
 			return;
 		}
@@ -78,7 +86,7 @@ public:
 		currentMarker += 2;
 	}
 
-	void WriteCode3Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3){
+	inline void WriteCode3Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3){
 		if (currentMarker >= MAXMEMBYTES - 3){
 			return;
 		}
@@ -88,7 +96,18 @@ public:
 		currentMarker += 3;
 	}
 
-	void WriteCode4Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4){
+	inline void WriteCode3BytesFromOpcodeRegNumPair(unsigned char opcode, RegisterNumPair* r) {
+		if (currentMarker >= MAXMEMBYTES - 3) {
+			return;
+		}
+		byteCode[currentMarker] = opcode;
+		byteCode[currentMarker + 1] = r->r1;
+		byteCode[currentMarker + 2] = r->r2;
+		currentMarker += 3;
+	}
+
+
+	inline void WriteCode4Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4){
 		if (currentMarker >= MAXMEMBYTES - 4){
 			return;
 		}
@@ -99,20 +118,31 @@ public:
 		currentMarker += 4;
 	}
 
+	inline void WriteCode4BytesFromOpcodeRegNumTriplet(unsigned char opcode, RegisterNumTriplet* r) {
+		if (currentMarker >= MAXMEMBYTES - 4) {
+			return;
+		}
+		byteCode[currentMarker] = opcode;
+		byteCode[currentMarker + 1] = r->r1;
+		byteCode[currentMarker + 2] = r->r2;
+		byteCode[currentMarker + 3] = r->r3;
+		currentMarker += 4;
+	}
+
 	
-	int GetCurrentMarker() {
+	inline int GetCurrentMarker() {
 		return currentMarker;
 	}
 
-	unsigned char* GetByteCodePointer() {
+	inline unsigned char* GetByteCodePointer() {
 		return &byteCode[0];
 	}
 
-	void SetLoadingOffset(int offset) {
+	inline void SetLoadingOffset(int offset) {
 		loadingOffset = offset;
 	}
 
-	int GetLoadingOffset() {
+	inline int GetLoadingOffset() {
 		return loadingOffset;
 	}
 

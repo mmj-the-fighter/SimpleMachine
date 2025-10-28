@@ -6,6 +6,7 @@
 #include "TextFileLoader.hpp"
 #include "SymbolTable.hpp"
 #include "CommonDefs.h"
+#include "RegisterHelper.hpp"
 
 class Assembler
 {
@@ -13,6 +14,7 @@ class Assembler
 	Program* program;
 	SymbolTable table;
 	SymbolTable registerTable;
+	RegisterHelper registerHelper;
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
 		program = prog;
@@ -93,6 +95,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	//returns false if buffer is overflowed
 	bool StoreSymbolIfAny(char* buffer){
@@ -151,7 +154,8 @@ private:
 		return true;
 	}
 
-	bool AssembleByteCode(char* buffer){
+	bool AssembleByteCode(char* buffer) {
+		//util::ProfilerScope prof(1729);
 		int i = 0;
 		int j = 0;
 		int k = 0;
@@ -161,28 +165,30 @@ private:
 		char operandBuffer[BUFFERLENGTH];
 		char operandArray[3][BUFFERLENGTH];
 		bool isLabel = false;
+		RegisterNumPair regNumPair;
+		RegisterNumTriplet regNumTriplet;
 
 		//Read first string
-		while (k<BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalnum(c) || c == ':')){
+		while (k < BUFFERLENGTH - 1 && c != '#' && c != '\0' && (isalnum(c) || c == ':')) {
 			opcodestr[k] = c;
 			++k;
 			++i;
-			if (i < BUFFERLENGTH){
+			if (i < BUFFERLENGTH) {
 				c = buffer[i];
 			}
-			else{
+			else {
 				c = '\0';
 			}
-			
-			if (c == ':'){
+
+			if (c == ':') {
 				isLabel = true;
 			}
 		}
-		if (k >= BUFFERLENGTH - 1){
+		if (k >= BUFFERLENGTH - 1) {
 			return false;
 		}
 		//If comment do nothing, read next line
-		if (c == '#'){
+		if (c == '#') {
 			return true;
 		}
 		opcodestr[k] = '\0';
@@ -195,17 +201,17 @@ private:
 		unsigned char opcode;
 		int instructionLength;
 		program->GetOpcodeAndLength(opcodestr, &opcode, &instructionLength);
-		if (instructionLength < 1 || instructionLength > 4){
+		if (instructionLength < 1 || instructionLength > 4) {
 			return false;
 		}
 
 
-		for (count = 0; count < instructionLength-1; count++) {
+		for (count = 0; count < instructionLength - 1; count++) {
 			++i;
-			if (i < BUFFERLENGTH){
+			if (i < BUFFERLENGTH) {
 				c = buffer[i];
 			}
-			else{
+			else {
 				c = '\0';
 			}
 			k = 0;
@@ -248,8 +254,8 @@ private:
 		case INC_CODE:
 		case DCR_CODE:
 		case DISP_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
-			if (!found) {
+			regAddr1 = registerHelper.FindRegisterNumber(operandArray[0][0]);
+			if (0xFF == regAddr1) {
 				return false;
 			}
 			program->WriteCode2Bytes(opcode, regAddr1);
@@ -259,21 +265,18 @@ private:
 		case MOV_CODE:
 		case LDR_CODE:
 		case STR_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
-			if (!found) {
+			if (!registerHelper.FindRegisterNumberPair(
+				operandArray, &regNumPair)
+				) {
 				return false;
 			}
-			regAddr2 = registerTable.Lookup(&operandArray[1][0], &found);
-			if (!found) {
-				return false;
-			}
-			program->WriteCode3Bytes(opcode, regAddr1, regAddr2);
+			program->WriteCode3BytesFromOpcodeRegNumPair(opcode, &regNumPair);
 			break;
 		case LOAD_CODE:
 		case STORE_CODE:
 		case MVI_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0], &found);
-			if (!found) {
+			regAddr1 = registerHelper.FindRegisterNumber(operandArray[0][0]);
+			if (0xFF == regAddr1) {
 				return false;
 			}
 			op2 = atoi(&operandArray[1][0]);
@@ -281,19 +284,12 @@ private:
 			break;
 		case ADD3_CODE:
 		case SUB3_CODE:
-			regAddr1 = registerTable.Lookup(&operandArray[0][0],&found);
-			if (!found) {
+			if (!registerHelper.FindRegisterNumberTriplet(
+				operandArray, &regNumTriplet)
+				) {
 				return false;
 			}
-			regAddr2 = registerTable.Lookup(&operandArray[1][0],&found);
-			if (!found) {
-				return false;
-			}
-			regAddr3 = registerTable.Lookup(&operandArray[2][0],&found);
-			if (!found) {
-				return false;
-			}
-			program->WriteCode4Bytes(opcode,regAddr1, regAddr2, regAddr3);
+			program->WriteCode4BytesFromOpcodeRegNumTriplet(opcode, &regNumTriplet);
 			break;
 		}
 		return true;

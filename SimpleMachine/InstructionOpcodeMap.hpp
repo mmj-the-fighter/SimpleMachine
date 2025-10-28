@@ -5,31 +5,16 @@
 #include <cstring>
 #include <string>
 
+#include "CommonDefs.h"
 
-enum {
-	HLT_CODE = 0,
-	ADD_CODE = 1,
-	SUB_CODE = 2,
-	JNZ_CODE = 3,
-	JZ_CODE = 4,
-	MOV_CODE = 5,
-	LOAD_CODE = 6,
-	LDR_CODE = 7,
-	STORE_CODE = 8,
-	STR_CODE = 9,
-	INC_CODE = 10,
-	DCR_CODE = 11,
-	MVI_CODE = 12,
-	ADD3_CODE = 13,
-	SUB3_CODE = 14,
-	DISP_CODE = 15
-};
+
 class InstructionOpcodeMap
 {
 private:
 	std::map<std::string, unsigned char> inopmap;
 	std::map<unsigned char, int> inlengthmap;
 	std::map<std::string, int> inlengthmapstr;
+	int inlengtharray[MAXOPCODES];
 public:
 	InstructionOpcodeMap(){
 		inopmap["hlt"] = HLT_CODE;
@@ -65,6 +50,25 @@ public:
 		inlengthmap[DCR_CODE] = 2;
 		inlengthmap[MVI_CODE] = 3;
 		inlengthmap[DISP_CODE] = 2;
+
+		inlengtharray[HLT_CODE] = 1;
+		inlengtharray[ADD_CODE] = 3;
+		inlengtharray[SUB_CODE] = 3;
+		inlengtharray[ADD3_CODE] = 4;
+		inlengtharray[SUB3_CODE] = 4;
+		inlengtharray[JNZ_CODE] = 2;
+		inlengtharray[JZ_CODE] = 2;
+		inlengtharray[MOV_CODE] = 3;
+		inlengtharray[LOAD_CODE] = 3;
+		inlengtharray[LDR_CODE] = 3;
+		inlengtharray[STORE_CODE] = 3;
+		inlengtharray[STR_CODE] = 3;
+		inlengtharray[INC_CODE] = 2;
+		inlengtharray[DCR_CODE] = 2;
+		inlengtharray[MVI_CODE] = 3;
+		inlengtharray[DISP_CODE] = 2;
+
+
 
 		inlengthmapstr["hlt"] = 1;
 		inlengthmapstr["add"] = 3;
@@ -106,6 +110,13 @@ public:
 			len = it->second;
 		}
 		return len;
+	}
+
+	int GetInstructionLengthForOpcodeFast(unsigned char code) {
+		if (code >= MAXOPCODES) {
+			return 0;
+		}
+		return inlengtharray[code];
 	}
 
 	int GetInstructionLengthForOpcodeStr(char *str){

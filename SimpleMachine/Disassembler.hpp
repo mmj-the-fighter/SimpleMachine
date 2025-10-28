@@ -45,7 +45,7 @@ public:
 	}
 
 	bool PassForSymbols() {
-		util::ProfilerScope prof(311);
+		//util::ProfilerScope prof(311);
 		int address = loadingOffset;
 		int labelCount = 0;
 
