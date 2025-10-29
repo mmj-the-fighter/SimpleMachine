@@ -13,40 +13,16 @@ class Assembler
 	TextFileLoader* tfLoader;
 	Program* program;
 	SymbolTable labelTable;
-	SymbolTable registerTable;
 	RegisterHelper registerHelper;
 	InstructionOpcodeMap inOpMap;
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
 		program = prog;
-		tfLoader = loader;
-		InitRegisterTable();
 	}
 
 	Assembler(){
 		program = NULL;
 		tfLoader = NULL;
-		InitRegisterTable();
-	}
-
-	void InitRegisterTable()
-	{
-		registerTable.AddLabel("a", 0);
-		registerTable.AddLabel("b", 1);
-		registerTable.AddLabel("c", 2);
-		registerTable.AddLabel("d", 3);
-		registerTable.AddLabel("e", 4);
-		registerTable.AddLabel("f", 5);
-		registerTable.AddLabel("g", 6);
-		registerTable.AddLabel("h", 7);
-		registerTable.AddLabel("i", 8);
-		registerTable.AddLabel("j", 9);
-		registerTable.AddLabel("k", 10);
-		registerTable.AddLabel("l", 11);
-		registerTable.AddLabel("m", 12);
-		registerTable.AddLabel("n", 13);
-		registerTable.AddLabel("o", 14);
-		registerTable.AddLabel("p", 15);
 	}
 
 	void Set(TextFileLoader* loader, Program* prog){
