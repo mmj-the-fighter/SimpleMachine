@@ -5,6 +5,7 @@
 #define MAXREGS 16
 #define MAXOPCODES 16
 #define BUFFERLENGTH 256
+#define MAXOPERANDLENGTH 3
 
 enum {
 	HLT_CODE = 0,

@@ -152,7 +152,12 @@ private:
 		char c = buffer[i];
 		char opcodestr[BUFFERLENGTH];
 		char operandBuffer[BUFFERLENGTH];
-		char operandArray[3][BUFFERLENGTH];
+		char operandArray[MAXOPERANDLENGTH][BUFFERLENGTH];
+		int operandArrayLengths[MAXOPERANDLENGTH];
+		for (i = 0; i < MAXOPERANDLENGTH; i++) {
+			operandArrayLengths[i] = 0;
+		}
+		i = 0;
 		bool isLabel = false;
 		RegisterNumPair regNumPair;
 		RegisterNumTriplet regNumTriplet;
@@ -195,6 +200,10 @@ private:
 			return false;
 		}
 
+		if (instructionLength > MAXOPERANDLENGTH+1) {
+			return false;
+		}
+
 
 		for (count = 0; count < instructionLength - 1; count++) {
 			++i;
@@ -215,19 +224,19 @@ private:
 				return false;
 			}
 			operandBuffer[k] = '\0';
+			operandArrayLengths[count] = k;
 			j = 0;
 			while (j < BUFFERLENGTH && (operandArray[count][j] = operandBuffer[j]) != '\0') {
 				++j;
 			}
 		}
+		int oper1Len = operandArrayLengths[0];
+		int oper1oper2Len = oper1Len + operandArrayLengths[1];
+		int oper1oper2oper3Len = oper1oper2Len + operandArrayLengths[2];
 
 		int address = 0;
-		unsigned char op1 = 0;
-		unsigned char op2 = 0;
-		unsigned char op3 = 0;
-		int regAddr1 = 0;
-		int regAddr2 = 0;
-		int regAddr3 = 0;
+		unsigned char num = 0;
+		int regAddr = 0;
 		bool found;
 		switch (opcode) {
 		case HLT_CODE:
@@ -237,6 +246,7 @@ private:
 		case JZ_CODE:
 			address = labelTable.Lookup(&operandArray[0][0], &found);
 			if (!found) {
+				std::cout << "Label not found ";
 				return false;
 			}
 			program->WriteCode2Bytes(opcode, address);
@@ -244,17 +254,25 @@ private:
 		case INC_CODE:
 		case DCR_CODE:
 		case DISP_CODE:
-			regAddr1 = registerHelper.FindRegisterNumber(operandArray[0][0]);
-			if (0xFF == regAddr1) {
+			if (oper1Len != 1) {
+				std::cout << "Invalid Register ";
 				return false;
 			}
-			program->WriteCode2Bytes(opcode, regAddr1);
+			regAddr = registerHelper.FindRegisterNumber(operandArray[0][0]);
+			if (0xFF == regAddr) {
+				return false;
+			}
+			program->WriteCode2Bytes(opcode, regAddr);
 			break;
 		case ADD_CODE:
 		case SUB_CODE:
 		case MOV_CODE:
 		case LDR_CODE:
 		case STR_CODE:
+			if (oper1oper2Len != 2) {
+				std::cout << "Invalid Register ";
+				return false;
+			}
 			if (!registerHelper.FindRegisterNumberPair(
 				operandArray, &regNumPair)
 				) {
@@ -265,15 +283,23 @@ private:
 		case LOAD_CODE:
 		case STORE_CODE:
 		case MVI_CODE:
-			regAddr1 = registerHelper.FindRegisterNumber(operandArray[0][0]);
-			if (0xFF == regAddr1) {
+			if (oper1Len != 1) {
+				std::cout << "Invalid Register ";
 				return false;
 			}
-			op2 = atoi(&operandArray[1][0]);
-			program->WriteCode3Bytes(opcode, regAddr1, op2);
+			regAddr = registerHelper.FindRegisterNumber(operandArray[0][0]);
+			if (0xFF == regAddr) {
+				return false;
+			}
+			num = atoi(&operandArray[1][0]);
+			program->WriteCode3Bytes(opcode, regAddr, num);
 			break;
 		case ADD3_CODE:
 		case SUB3_CODE:
+			if (oper1oper2oper3Len != 3) {
+				std::cout << "Invalid Register ";
+				return false;
+			}
 			if (!registerHelper.FindRegisterNumberTriplet(
 				operandArray, &regNumTriplet)
 				) {
