@@ -12,7 +12,6 @@ class InstructionOpcodeMap
 {
 private:
 	std::map<std::string, unsigned char> inopmap;
-	std::map<std::string, int> inlengthmapstr;
 	int inlengtharray[MAXOPCODES];
 
 	std::map<unsigned char, std::string> opinmap;
@@ -34,43 +33,6 @@ private:
 		inopmap["MVI"] = MVI_CODE;
 		inopmap["DISP"] = DISP_CODE;
 
-		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
-		inlengtharray[ADD_CODE] = ADD_CODE_LENGTH;
-		inlengtharray[SUB_CODE] = SUB_CODE_LENGTH;
-		inlengtharray[ADD3_CODE] = ADD3_CODE_LENGTH;
-		inlengtharray[SUB3_CODE] = SUB3_CODE_LENGTH;
-		inlengtharray[JNZ_CODE] = JNZ_CODE_LENGTH;
-		inlengtharray[JZ_CODE] = JZ_CODE_LENGTH;
-		inlengtharray[MOV_CODE] = MOV_CODE_LENGTH;
-		inlengtharray[LOAD_CODE] = LOAD_CODE_LENGTH;
-		inlengtharray[LDR_CODE] = LDR_CODE_LENGTH;
-		inlengtharray[STORE_CODE] = STORE_CODE_LENGTH;
-		inlengtharray[STR_CODE] = STR_CODE_LENGTH;
-		inlengtharray[INC_CODE] = INC_CODE_LENGTH;
-		inlengtharray[DCR_CODE] = DCR_CODE_LENGTH;
-		inlengtharray[MVI_CODE] = MVI_CODE_LENGTH;
-		inlengtharray[DISP_CODE] = DISP_CODE_LENGTH;
-
-
-
-		inlengthmapstr["HLT"] = HLT_CODE_LENGTH;
-		inlengthmapstr["ADD"] = ADD_CODE_LENGTH;
-		inlengthmapstr["SUB"] = SUB_CODE_LENGTH;
-		inlengthmapstr["ADD3"] = ADD3_CODE_LENGTH;
-		inlengthmapstr["SUB3"] = SUB3_CODE_LENGTH;
-		inlengthmapstr["JNZ"] = JNZ_CODE_LENGTH;
-		inlengthmapstr["JZ"] = JZ_CODE_LENGTH;
-		inlengthmapstr["MOV"] = MOV_CODE_LENGTH;
-		inlengthmapstr["LOAD"] = LOAD_CODE_LENGTH;
-		inlengthmapstr["LDR"] = LDR_CODE_LENGTH;
-		inlengthmapstr["STORE"] = STORE_CODE_LENGTH;
-		inlengthmapstr["STR"] = STORE_CODE_LENGTH;
-		inlengthmapstr["INC"] = INC_CODE_LENGTH;
-		inlengthmapstr["DCR"] = DCR_CODE_LENGTH;
-		inlengthmapstr["MVI"] = MVI_CODE_LENGTH;
-		inlengthmapstr["DISP"] = DISP_CODE_LENGTH;
-
-
 		opinmap[HLT_CODE] = "HLT";
 		opinmap[ADD_CODE] = "ADD";
 		opinmap[SUB_CODE] = "SUB";
@@ -87,6 +49,23 @@ private:
 		opinmap[DCR_CODE] = "DCR";
 		opinmap[MVI_CODE] = "MVI";
 		opinmap[DISP_CODE] = "DISP";
+
+		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
+		inlengtharray[ADD_CODE] = ADD_CODE_LENGTH;
+		inlengtharray[SUB_CODE] = SUB_CODE_LENGTH;
+		inlengtharray[ADD3_CODE] = ADD3_CODE_LENGTH;
+		inlengtharray[SUB3_CODE] = SUB3_CODE_LENGTH;
+		inlengtharray[JNZ_CODE] = JNZ_CODE_LENGTH;
+		inlengtharray[JZ_CODE] = JZ_CODE_LENGTH;
+		inlengtharray[MOV_CODE] = MOV_CODE_LENGTH;
+		inlengtharray[LOAD_CODE] = LOAD_CODE_LENGTH;
+		inlengtharray[LDR_CODE] = LDR_CODE_LENGTH;
+		inlengtharray[STORE_CODE] = STORE_CODE_LENGTH;
+		inlengtharray[STR_CODE] = STR_CODE_LENGTH;
+		inlengtharray[INC_CODE] = INC_CODE_LENGTH;
+		inlengtharray[DCR_CODE] = DCR_CODE_LENGTH;
+		inlengtharray[MVI_CODE] = MVI_CODE_LENGTH;
+		inlengtharray[DISP_CODE] = DISP_CODE_LENGTH;
 	}
 
 public:
@@ -96,21 +75,8 @@ public:
 		return instance;
 	}
 
-	unsigned char GetOpcode(char *str, bool *found) {
-		unsigned char opcode = 0xFF;
-		std::string keyToFind(str);
-		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
-		if (it != inopmap.end()) {
-			opcode = it->second;
-			*found = true;
-		}
-		else {
-			*found = false;
-		}
-		return opcode;
-	}
 
-	bool GetOpcodeAndInstrLength(char *str, unsigned char *pOpcode, int *pInstrLength) {
+	inline bool GetOpcodeAndInstrLength(char *str, unsigned char *pOpcode, int *pInstrLength) {
 		unsigned char opcode = 0xFF;
 		std::string keyToFind(str);
 		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
@@ -130,7 +96,7 @@ public:
 		}
 	}
 
-	std::string* GetOpcodeStrAndInstrLength(unsigned char opcode, int* pInstrLength, bool *found) {
+	inline std::string* GetOpcodeStrAndInstrLength(unsigned char opcode, int* pInstrLength, bool *found) {
 		if (opcode >= MAXOPCODES) {
 			*found = false;
 			return nullptr;
@@ -147,25 +113,11 @@ public:
 		}
 	}
 
-	inline bool IsValidOpcode(unsigned opcode) {
-		return (opcode < MAXOPCODES);
-	}
-
-	int GetInstructionLengthForOpcode(unsigned char code) {
+	inline int GetInstructionLengthForOpcode(unsigned char code) {
 		if (code >= MAXOPCODES) {
 			return 0;
 		}
 		return inlengtharray[code];
-	}
-
-	int GetInstructionLengthForOpcodeStr(char *str){
-		int len = 0;
-		std::string keyToFind(str);
-		std::map<std::string, int>::iterator it = inlengthmapstr.find(keyToFind);
-		if (it != inlengthmapstr.end()) {
-			len = it->second;
-		}
-		return len;
 	}
 
 };
