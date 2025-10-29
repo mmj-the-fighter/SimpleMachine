@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-#include "OpcodeInstructionMap.hpp"
+#include "InstructionOpcodeMap.hpp"
 #include "Machine.hpp"
 #include "RevSymbolTable.hpp"
 #include "CommonDefs.h"
@@ -16,7 +16,7 @@ class Disassembler
 	Machine* machine;
 	int loadingOffset;
 	RevSymbolTable addressLabelTable;
-	OpcodeInstructionMap opcodeInstructionMap;
+	InstructionOpcodeMap inOpMap;
 	TextPrinter printer;
 	RegisterHelper regHelper;
 	std::ostringstream ss;
@@ -52,6 +52,7 @@ public:
 		bool hltFound = false;
 		bool instrFound;
 		bool validAccess;
+		int instrLength;
 
 		while (!hltFound) {
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
@@ -59,7 +60,8 @@ public:
 				std::cout << "Unexpected access error\n";
 				return false;
 			}
-			std::string* pInstr = opcodeInstructionMap.GetInstruction(opcode, &instrFound);
+			
+			std::string* pInstr = inOpMap.GetOpcodeStrAndInstrLength(opcode, &instrLength, &instrFound);
 			if (instrFound) {
 				//std::cout << *pInstr << std::endl;
 				switch (opcode) {
@@ -77,7 +79,7 @@ public:
 					++labelCount;
 					break;
 				}
-				address += opcodeInstructionMap.GetInstructionLengthForOpcode(opcode);
+				address += instrLength;
 			}
 			else {
 				std::cout << "bad exe format\n";
@@ -111,6 +113,7 @@ public:
 			unsigned char operands[3];
 			RegisterPair regPair;
 			RegisterTriplet regTriplet;
+			int instrLength;
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
 			if (!validAccess) {
 				badLocation = address;
@@ -119,7 +122,7 @@ public:
 			}
 			//std::string* pReg;
 
-			std::string* pInstr = opcodeInstructionMap.GetInstruction(opcode, &foundInstr);
+			std::string* pInstr = inOpMap.GetOpcodeStrAndInstrLength(opcode, &instrLength, &foundInstr);
 			if (foundInstr) {
 				if (!machine->IsValidAddres(address - loadingOffset)) {
 					badLocation = address - loadingOffset;
@@ -277,7 +280,7 @@ public:
 					printer.AddChar('\n');
 					break;
 				}
-				address += opcodeInstructionMap.GetInstructionLengthForOpcode(opcode);
+				address += instrLength;
 			}
 			else {
 				badExeFormat = true;
