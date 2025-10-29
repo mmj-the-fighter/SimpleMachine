@@ -15,12 +15,13 @@ void Run(char* asmFile, char* ramFile) {
 	
 	SimpleMachineFacade sm;
 	sm.InitMemoryFromRamFile(ramFile);
-	sm.TranslateAssembly(asmFile);
-	sm.ExecuteProgram();
-	std::cout << "\n";
-	sm.ShowMachine();
-	std::cout << "\n";
-	sm.Disassemble();
+	if (sm.TranslateAssembly(asmFile)) {
+		sm.ExecuteProgram();
+		std::cout << "\n";
+		sm.ShowMachine();
+		std::cout << "\n";
+		sm.Disassemble();
+	}
 }
 
 int main(int argc, char* argv[])

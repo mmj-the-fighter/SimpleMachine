@@ -26,20 +26,21 @@ public:
 		loadingOffset = 0;
 	}
 
-	void TranslateAssembly(const char* asmFileName) {
+	bool TranslateAssembly(const char* asmFileName) {
 		util::ProfilerScope prof(110);
 		bool res = textFileLoader.LoadTextFromFile(asmFileName);
 
 		if (!res) {
 			std::cout << asmFileName << ": File Not Found";
-			return;
+			return false;
 		}
 		textFileLoader.FilterComments();
 		program.Clear();
 		if (!assembler.Translate()) {
 			std::cout << "Translation failed\n";
+			return false;
 		}
-
+		return true;
 	}
 	void ExecuteProgram() {
 		util::ProfilerScope prof(210);
