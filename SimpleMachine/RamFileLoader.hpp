@@ -12,7 +12,7 @@ class RamFileLoader
 {
 private:
 	char* buffer;
-	int bufferLength;
+	size_t bufferLength;
 public:
 	RamFileLoader()
 	{
@@ -20,8 +20,8 @@ public:
 		bufferLength = 0;
 	}
 
-	char GetTextAt(int i) {
-		if (i < 0 || i >= bufferLength) {
+	char GetTextAt(unsigned int i) {
+		if (i >= bufferLength) {
 			return '\0';
 		}
 		return buffer[i];
@@ -56,22 +56,22 @@ public:
 		std::string str((std::istreambuf_iterator<char>(in)),
 			std::istreambuf_iterator<char>());
 		DestroyBuffer();
-		bufferLength = str.size();
-		buffer = new char[bufferLength + 1];
-		const char* pc = str.c_str();
-		int i = 0;
 
 		bufferLength = str.size();
 		buffer = new char[bufferLength + 1];
-		std::transform(str.begin(), str.end(), buffer, ::tolower);
+		const char* buffer_src = str.c_str();
+		for (size_t i = 0; i < str.size(); i++) {
+			buffer[i] = buffer_src[i];
+		}
 		buffer[bufferLength] = '\0';
+
 
 		//std::cout << buffer << std::endl;
 		return true;
 	}
 
 	bool GetNonEmptyLine(char* buf, int bufLen, int* ssm, int* lineNumber) {
-		int i = *ssm;
+		unsigned int i = *ssm;
 		int k;
 		char c;
 		int validCharCount;
@@ -107,8 +107,8 @@ public:
 #define MAXDIGITS 32
 		char i1Buf[MAXDIGITS];
 		char i2Buf[MAXDIGITS];
-		int lineLength = strlen(line);
-		int k = 0;
+		size_t lineLength = strlen(line);
+		unsigned int k = 0;
 		//skip whitespace
 		while (k < lineLength && (line[k] == ' ' || line[k] == '\t')) {
 			++k;
@@ -119,7 +119,7 @@ public:
 
 		//read first buffer
 		int index = 0;
-		char c;
+		char c='\0';
 		while (index < MAXDIGITS && k < lineLength) {
 			c = line[k];
 			if (c == ' ' || c == '\t' || c == '\0') {

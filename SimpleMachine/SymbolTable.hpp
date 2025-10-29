@@ -7,20 +7,15 @@
 
 class SymbolTable
 {
-
 private:
 	std::map<std::string, int> data;
-	int unknown;
-public:
-	SymbolTable(){
-		unknown = -1;
-	}
 
-	void AddLabel(std::string label, int address){
+public:
+	inline void AddLabel(std::string label, int address){
 		data[label] = address;
 	}
 
-	unsigned char Lookup(std::string str, bool* found){
+	inline unsigned char Lookup(std::string str, bool* found){
 		int addr = 0;
 		std::string keyToFind(str);
 		std::map<std::string, int>::iterator it = data.find(keyToFind);
@@ -31,8 +26,7 @@ public:
 		else {
 			*found = false;
 		}
-		return addr;
+		return (unsigned char)addr;
 	}
-
 };
 #endif

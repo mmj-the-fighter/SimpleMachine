@@ -14,13 +14,13 @@
 class Disassembler
 {
 	Machine* machine;
-	int loadingOffset;
+	unsigned char loadingOffset;
 	RevSymbolTable addressLabelTable;
 	TextPrinter printer;
 	RegisterHelper regHelper;
 	std::ostringstream ss;
 public:
-	Disassembler(Machine* m, int offset) {
+	Disassembler(Machine* m, unsigned char offset) {
 		machine = m;
 		loadingOffset = offset;
 	}
@@ -38,20 +38,20 @@ public:
 	}
 
 
-	void Set(Machine* m, int offset) {
+	void Set(Machine* m, unsigned char offset) {
 		machine = m;
 		loadingOffset = offset;
 	}
 
 	bool PassForSymbols() {
 		//util::ProfilerScope prof(311);
-		int address = loadingOffset;
+		unsigned char address = loadingOffset;
 		int labelCount = 0;
 
 		bool hltFound = false;
 		bool instrFound;
 		bool validAccess;
-		int instrLength;
+		unsigned char instrLength;
 
 		while (!hltFound) {
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
@@ -60,7 +60,7 @@ public:
 				return false;
 			}
 			
-			std::string* pInstr = InstructionOpcodeMap::GetInstance()
+			InstructionOpcodeMap::GetInstance()
 				.GetOpcodeStrAndInstrLength(opcode, &instrLength, &instrFound);
 			if (instrFound) {
 				//std::cout << *pInstr << std::endl;
@@ -90,7 +90,7 @@ public:
 	}
 
 	bool Translate() {
-		int address = loadingOffset;
+		unsigned char address = loadingOffset;
 		bool hltFound = false;
 		bool validAccess;
 		bool foundInstr;
@@ -113,7 +113,7 @@ public:
 			unsigned char operands[3];
 			RegisterPair regPair;
 			RegisterTriplet regTriplet;
-			int instrLength;
+			unsigned char instrLength;
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
 			if (!validAccess) {
 				badLocation = address;

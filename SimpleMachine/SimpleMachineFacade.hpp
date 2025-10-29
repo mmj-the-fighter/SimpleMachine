@@ -18,7 +18,7 @@ class SimpleMachineFacade
 	Program program;
 	Assembler assembler;
 	Disassembler disassembler;
-	int loadingOffset;
+	unsigned char loadingOffset;
 
 public:
 	SimpleMachineFacade(){
@@ -55,7 +55,7 @@ public:
 		return disassembler.Translate();
 	}
 
-	void SetCell(unsigned int address, unsigned int content){
+	void SetCell(unsigned char address, unsigned char content){
 		machine.memory[address] = content;
 	}
 
@@ -79,7 +79,7 @@ public:
 			ramFileLoader.GetNonEmptyLine(buffer, BUFFERLENGTH, &i, &lineNumber);
 			ramFileLoader.ParseTwoIntegersFromLine(buffer, &loc, &value);
 			if (loc >= 0 && loc < 256 && value >= 0 && value < 256) {
-				SetCell(loc, value);
+				SetCell((unsigned char)loc, (unsigned char)value);
 			}
 			if (ramFileLoader.GetTextAt(i) == '\0') {
 				break;

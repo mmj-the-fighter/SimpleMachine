@@ -12,7 +12,7 @@ class InstructionOpcodeMap
 {
 private:
 	std::map<std::string, unsigned char> inopmap;
-	int inlengtharray[MAXOPCODES];
+	unsigned char inlengtharray[MAXOPCODES];
 
 	std::map<unsigned char, std::string> opinmap;
 	InstructionOpcodeMap() {
@@ -76,7 +76,7 @@ public:
 	}
 
 
-	inline bool GetOpcodeAndInstrLength(char *str, unsigned char *pOpcode, int *pInstrLength) {
+	inline bool GetOpcodeAndInstrLength(char *str, unsigned char *pOpcode, unsigned char *pInstrLength) {
 		unsigned char opcode = 0xFF;
 		std::string keyToFind(str);
 		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
@@ -96,7 +96,7 @@ public:
 		}
 	}
 
-	inline std::string* GetOpcodeStrAndInstrLength(unsigned char opcode, int* pInstrLength, bool *found) {
+	inline std::string* GetOpcodeStrAndInstrLength(unsigned char opcode, unsigned char* pInstrLength, bool *found) {
 		if (opcode >= MAXOPCODES) {
 			*found = false;
 			return nullptr;
@@ -113,7 +113,7 @@ public:
 		}
 	}
 
-	inline int GetInstructionLengthForOpcode(unsigned char code) {
+	inline unsigned char GetInstructionLengthForOpcode(unsigned char code) {
 		if (code >= MAXOPCODES) {
 			return 0;
 		}

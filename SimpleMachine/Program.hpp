@@ -10,8 +10,8 @@ class Program
 {
 private:
 	unsigned char byteCode[MAXMEMBYTES];
-	int currentMarker;
-	int loadingOffset;
+	unsigned char currentMarker;
+	unsigned char loadingOffset;
 public:
 	Program()
 	{
@@ -26,7 +26,7 @@ public:
 		currentMarker = 0;
 	}
 
-	inline bool AdvanceMarker(int instrLength){
+	inline bool AdvanceMarker(unsigned char instrLength){
 		if (currentMarker+ instrLength > MAXMEMBYTES - 1){
 			return false;
 		}
@@ -93,7 +93,7 @@ public:
 		currentMarker += 4;
 	}
 	
-	inline int GetCurrentMarker() {
+	inline unsigned char GetCurrentMarker() {
 		return currentMarker;
 	}
 
@@ -101,11 +101,11 @@ public:
 		return &byteCode[0];
 	}
 
-	inline void SetLoadingOffset(int offset) {
+	inline void SetLoadingOffset(unsigned char offset) {
 		loadingOffset = offset;
 	}
 
-	inline int GetLoadingOffset() {
+	inline unsigned char GetLoadingOffset() {
 		return loadingOffset;
 	}
 };

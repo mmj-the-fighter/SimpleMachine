@@ -16,9 +16,15 @@ struct Machine{
 	
 
 	Machine(){
-		memset(memory, 0, MAXMEMBYTES);
 		zeroFlag = false;
 		program = NULL;
+		pc = 0;
+		for (int i = 0; i < MAXMEMBYTES; i++) {
+			memory[i] = HLT_CODE;
+		}
+		for (int i = 0; i < MAXREGS; i++) {
+			regs[i] = HLT_CODE;
+		}
 	}
 
 	inline bool IsValidAddres(int address) {
@@ -41,7 +47,7 @@ struct Machine{
 		}
 	}
 
-	bool GetBytes(int startAddress, int numberOfBytes, unsigned char* bytes) {
+	bool GetBytes(int startAddress, size_t numberOfBytes, unsigned char* bytes) {
 		if (startAddress < 0  || startAddress >= MAXMEMBYTES || numberOfBytes <= 0) {
 			return false;
 		}
@@ -84,10 +90,10 @@ struct Machine{
 		return true;
 	}
 
-	void LoadProgram(int startingAddress, Program* aProgram){
+	void LoadProgram(unsigned char startingAddress, Program* aProgram){
 		program = aProgram;
 		unsigned char* code = program->GetByteCodePointer();
-		int codeLength = program->GetCurrentMarker();
+		unsigned char codeLength = program->GetCurrentMarker();
 		memcpy(memory + startingAddress, code, codeLength);
 		pc = startingAddress;
 		program->SetLoadingOffset(startingAddress);
@@ -97,18 +103,17 @@ struct Machine{
 		if (NULL == program) {
 			return false;
 		}
-		int loadingOffset = program->GetLoadingOffset();
-
+		unsigned char loadingOffset = program->GetLoadingOffset();
 		do{
 			unsigned char opcode = memory[pc];
-			int op1 = 0;
-			int op2 = 0;
-			int op3 = 0;
+			unsigned char op1 = 0;
+			unsigned char op2 = 0;
+			unsigned char op3 = 0;
 			if (opcode == HLT_CODE){
 				return true;
 			}
 			//opcode = 0xff;
-			int instrLen = InstructionOpcodeMap::GetInstance()
+			unsigned char instrLen = InstructionOpcodeMap::GetInstance()
 				.GetInstructionLengthForOpcode(opcode);
 			if (instrLen == 0){
 				std::cout << "Invalid opcode "<<(int)opcode<<" found: Aborting interpretation!\n";

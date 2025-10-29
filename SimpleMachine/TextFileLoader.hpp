@@ -5,13 +5,21 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
+
+char convertToUpperCase(char c) {
+	if (c >= 'a' && c <= 'z') {
+		return (char)c + 26;
+	}
+	else {
+		return c;
+	}
+}
 
 class TextFileLoader
 {
 private:
 	char *buffer;
-	int bufferLength;
+	size_t bufferLength;
 public:
 	TextFileLoader()
 	{
@@ -19,8 +27,8 @@ public:
 		bufferLength = 0;
 	}
 
-	char GetTextAt(int i){
-		if (i < 0 || i >= bufferLength){
+	char GetTextAt(unsigned int i){
+		if (i >= bufferLength){
 			return '\0';
 		}
 		return buffer[i];
@@ -44,6 +52,7 @@ public:
 		}
 	}
 
+
 	bool LoadTextFromFile(std::string filename) {
 		if (filename.compare("") == 0) {
 			return false;
@@ -58,7 +67,10 @@ public:
 
 		bufferLength = str.size();
 		buffer = new char[bufferLength + 1];
-		std::transform(str.begin(), str.end(), buffer, ::toupper);
+		const char* buffer_src = str.c_str();
+		for (size_t i = 0; i < str.size(); i++) {
+			buffer[i] = convertToUpperCase(buffer_src[i]);
+		}
 		buffer[bufferLength] = '\0';
 
 		//std::cout << buffer << std::endl;
@@ -66,7 +78,7 @@ public:
 	}
 
 	bool GetNonEmptyLine(char* buf, int bufLen, int* ssm, int* lineNumber) {
-		int i = *ssm;
+		unsigned int i = *ssm;
 		int k;
 		char c;
 		int validCharCount;

@@ -17,6 +17,7 @@ class Assembler
 	
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
+		tfLoader = loader;
 		program = prog;
 	}
 
@@ -82,7 +83,7 @@ private:
 		char opcodestr[BUFFERLENGTH];
 		bool isLabel = false;
 		unsigned char opcode;
-		int instrLength;
+		unsigned char instrLength;
 		bool found;
 		//read a line
 		while (k < BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalpha(c) || c == ':')){
@@ -193,7 +194,7 @@ private:
 		}
 
 		unsigned char opcode;
-		int instructionLength;
+		unsigned char instructionLength;
 		bool isInstr = InstructionOpcodeMap::GetInstance()
 			.GetOpcodeAndInstrLength(opcodestr, &opcode, &instructionLength);
 		if (!isInstr) {
@@ -234,9 +235,9 @@ private:
 		int oper1oper2Len = oper1Len + operandArrayLengths[1];
 		int oper1oper2oper3Len = oper1oper2Len + operandArrayLengths[2];
 
-		int address = 0;
+		unsigned char address = 0;
 		unsigned char num = 0;
-		int regAddr = 0;
+		unsigned char regAddr = 0;
 		bool found;
 		switch (opcode) {
 		case HLT_CODE:
@@ -291,7 +292,7 @@ private:
 			if (0xFF == regAddr) {
 				return false;
 			}
-			num = atoi(&operandArray[1][0]);
+			num = (unsigned char)atoi(&operandArray[1][0]);
 			program->WriteCode3Bytes(opcode, regAddr, num);
 			break;
 		case ADD3_CODE:
