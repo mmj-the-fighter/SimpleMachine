@@ -1,5 +1,7 @@
 buildroot/
 .vs/
+SimpleMachine/
+x64/
 
 # Prerequisites
 *.d
