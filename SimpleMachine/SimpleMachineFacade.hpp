@@ -42,17 +42,17 @@ public:
 		}
 		return true;
 	}
-	void ExecuteProgram() {
+	bool InterpretProgram() {
 		util::ProfilerScope prof(210);
 		loadingOffset = 8;
 		machine.LoadProgram(loadingOffset, &program);
-		machine.Execute();
+		return machine.InterpretProgram();
 	}
 
-	void Disassemble() {
+	bool Disassemble() {
 		util::ProfilerScope prof(310);
 		disassembler.Set(&machine, loadingOffset);
-		disassembler.Translate();
+		return disassembler.Translate();
 	}
 
 	void SetCell(unsigned int address, unsigned int content){

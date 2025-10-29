@@ -12,15 +12,30 @@ static void string_copy(char* dst, const char* src, int dstBufSize) {
 }
 
 void Run(char* asmFile, char* ramFile) {
-	
+	char c;
 	SimpleMachineFacade sm;
 	sm.InitMemoryFromRamFile(ramFile);
-	if (sm.TranslateAssembly(asmFile)) {
-		sm.ExecuteProgram();
+	if (!sm.TranslateAssembly(asmFile)) {
+		return;
+	}
+	std::cout << "Translation: success\n";
+	
+	if (!sm.InterpretProgram()) {
+		return;
+	}
+	std::cout << "Interpretation: success\n";
+
+	if (!sm.Disassemble()) {
+		return;
+	}
+	std::cout << "Disassembly: success\n";
+
+	std::cout << "Do you want to see machine info? (y/n): ";
+	std::cin >> c;
+	if(c=='y' || c== 'Y'){
 		std::cout << "\n";
 		sm.ShowMachine();
 		std::cout << "\n";
-		sm.Disassemble();
 	}
 }
 

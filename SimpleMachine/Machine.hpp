@@ -93,9 +93,9 @@ struct Machine{
 		program->SetLoadingOffset(startingAddress);
 	}
 
-	void Execute() {
+	bool InterpretProgram() {
 		if (NULL == program) {
-			return;
+			return false;
 		}
 		int loadingOffset = program->GetLoadingOffset();
 
@@ -105,13 +105,14 @@ struct Machine{
 			int op2 = 0;
 			int op3 = 0;
 			if (opcode == HLT_CODE){
-				break;
+				return true;
 			}
+			//opcode = 0xff;
 			int instrLen = InstructionOpcodeMap::GetInstance()
 				.GetInstructionLengthForOpcode(opcode);
 			if (instrLen == 0){
-				std::cout << "Unexpected program failure!\n";
-				break;
+				std::cout << "Invalid opcode "<<(int)opcode<<" found: Aborting interpretation!\n";
+				return false;
 			}
 			switch (instrLen){
 			case 2:
@@ -236,6 +237,7 @@ struct Machine{
 			}
 			
 		} while (true);
+		return true;
 	}
 
 	void ShowMemory(){
