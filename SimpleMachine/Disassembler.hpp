@@ -16,7 +16,6 @@ class Disassembler
 	Machine* machine;
 	int loadingOffset;
 	RevSymbolTable addressLabelTable;
-	InstructionOpcodeMap inOpMap;
 	TextPrinter printer;
 	RegisterHelper regHelper;
 	std::ostringstream ss;
@@ -61,7 +60,8 @@ public:
 				return false;
 			}
 			
-			std::string* pInstr = inOpMap.GetOpcodeStrAndInstrLength(opcode, &instrLength, &instrFound);
+			std::string* pInstr = InstructionOpcodeMap::GetInstance()
+				.GetOpcodeStrAndInstrLength(opcode, &instrLength, &instrFound);
 			if (instrFound) {
 				//std::cout << *pInstr << std::endl;
 				switch (opcode) {
@@ -122,7 +122,8 @@ public:
 			}
 			//std::string* pReg;
 
-			std::string* pInstr = inOpMap.GetOpcodeStrAndInstrLength(opcode, &instrLength, &foundInstr);
+			std::string* pInstr = InstructionOpcodeMap::GetInstance()
+				.GetOpcodeStrAndInstrLength(opcode, &instrLength, &foundInstr);
 			if (foundInstr) {
 				if (!machine->IsValidAddres(address - loadingOffset)) {
 					badLocation = address - loadingOffset;

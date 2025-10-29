@@ -16,8 +16,7 @@ private:
 	int inlengtharray[MAXOPCODES];
 
 	std::map<unsigned char, std::string> opinmap;
-public:
-	InstructionOpcodeMap(){
+	InstructionOpcodeMap() {
 		inopmap["HLT"] = HLT_CODE;
 		inopmap["ADD"] = ADD_CODE;
 		inopmap["SUB"] = SUB_CODE;
@@ -88,6 +87,13 @@ public:
 		opinmap[DCR_CODE] = "DCR";
 		opinmap[MVI_CODE] = "MVI";
 		opinmap[DISP_CODE] = "DISP";
+	}
+
+public:
+
+	inline static InstructionOpcodeMap& GetInstance() {
+		static InstructionOpcodeMap instance;
+		return instance;
 	}
 
 	unsigned char GetOpcode(char *str, bool *found) {

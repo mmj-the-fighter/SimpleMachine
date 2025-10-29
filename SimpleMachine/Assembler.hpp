@@ -14,7 +14,7 @@ class Assembler
 	Program* program;
 	SymbolTable labelTable;
 	RegisterHelper registerHelper;
-	InstructionOpcodeMap inOpMap;
+	
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
 		program = prog;
@@ -118,7 +118,8 @@ private:
 			opcodestr[k] = '\0';
 		}
 
-		bool isInstr = inOpMap.GetOpcodeAndInstrLength(opcodestr, &opcode, &instrLength);
+		bool isInstr = InstructionOpcodeMap::GetInstance()
+			.GetOpcodeAndInstrLength(opcodestr, &opcode, &instrLength);
 		if (isInstr) {
 			if (isLabel) {
 				std::cout << "opcode " << opcodestr << " cannot be label\n";
@@ -188,7 +189,8 @@ private:
 
 		unsigned char opcode;
 		int instructionLength;
-		bool isInstr = inOpMap.GetOpcodeAndInstrLength(opcodestr, &opcode, &instructionLength);
+		bool isInstr = InstructionOpcodeMap::GetInstance()
+			.GetOpcodeAndInstrLength(opcodestr, &opcode, &instructionLength);
 		if (!isInstr) {
 			return false;
 		}
