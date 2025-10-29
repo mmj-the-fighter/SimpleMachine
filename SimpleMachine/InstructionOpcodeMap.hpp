@@ -12,84 +12,85 @@ class InstructionOpcodeMap
 {
 private:
 	std::map<std::string, unsigned char> inopmap;
-	std::map<unsigned char, int> inlengthmap;
 	std::map<std::string, int> inlengthmapstr;
 	int inlengtharray[MAXOPCODES];
+
+	std::map<unsigned char, std::string> opinmap;
 public:
 	InstructionOpcodeMap(){
-		inopmap["hlt"] = HLT_CODE;
-		inopmap["add"] = ADD_CODE;
-		inopmap["sub"] = SUB_CODE;
-		inopmap["add3"] = ADD3_CODE;
-		inopmap["sub3"] = SUB3_CODE;
-		inopmap["jnz"] = JNZ_CODE;
-		inopmap["jz"] = JZ_CODE;
-		inopmap["mov"] = MOV_CODE;
-		inopmap["load"] = LOAD_CODE;
-		inopmap["ldr"] = LDR_CODE;
-		inopmap["store"] = STORE_CODE;
-		inopmap["str"] = STORE_CODE;
-		inopmap["inc"] = INC_CODE;
-		inopmap["dcr"] = DCR_CODE;
-		inopmap["mvi"] = MVI_CODE;
-		inopmap["disp"] = DISP_CODE;
+		inopmap["HLT"] = HLT_CODE;
+		inopmap["ADD"] = ADD_CODE;
+		inopmap["SUB"] = SUB_CODE;
+		inopmap["ADD3"] = ADD3_CODE;
+		inopmap["SUB3"] = SUB3_CODE;
+		inopmap["JNZ"] = JNZ_CODE;
+		inopmap["JZ"] = JZ_CODE;
+		inopmap["MOV"] = MOV_CODE;
+		inopmap["LOAD"] = LOAD_CODE;
+		inopmap["LDR"] = LDR_CODE;
+		inopmap["STORE"] = STORE_CODE;
+		inopmap["STR"] = STORE_CODE;
+		inopmap["INC"] = INC_CODE;
+		inopmap["DCR"] = DCR_CODE;
+		inopmap["MVI"] = MVI_CODE;
+		inopmap["DISP"] = DISP_CODE;
 
-		inlengthmap[HLT_CODE] = 1;
-		inlengthmap[ADD_CODE] = 3;
-		inlengthmap[SUB_CODE] = 3;
-		inlengthmap[ADD3_CODE] = 4;
-		inlengthmap[SUB3_CODE] = 4;
-		inlengthmap[JNZ_CODE] = 2;
-		inlengthmap[JZ_CODE] = 2;
-		inlengthmap[MOV_CODE] = 3;
-		inlengthmap[LOAD_CODE] = 3;
-		inlengthmap[LDR_CODE] = 3;
-		inlengthmap[STORE_CODE] = 3;
-		inlengthmap[STR_CODE] = 3;
-		inlengthmap[INC_CODE] = 2;
-		inlengthmap[DCR_CODE] = 2;
-		inlengthmap[MVI_CODE] = 3;
-		inlengthmap[DISP_CODE] = 2;
-
-		inlengtharray[HLT_CODE] = 1;
-		inlengtharray[ADD_CODE] = 3;
-		inlengtharray[SUB_CODE] = 3;
-		inlengtharray[ADD3_CODE] = 4;
-		inlengtharray[SUB3_CODE] = 4;
-		inlengtharray[JNZ_CODE] = 2;
-		inlengtharray[JZ_CODE] = 2;
-		inlengtharray[MOV_CODE] = 3;
-		inlengtharray[LOAD_CODE] = 3;
-		inlengtharray[LDR_CODE] = 3;
-		inlengtharray[STORE_CODE] = 3;
-		inlengtharray[STR_CODE] = 3;
-		inlengtharray[INC_CODE] = 2;
-		inlengtharray[DCR_CODE] = 2;
-		inlengtharray[MVI_CODE] = 3;
-		inlengtharray[DISP_CODE] = 2;
+		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
+		inlengtharray[ADD_CODE] = ADD_CODE_LENGTH;
+		inlengtharray[SUB_CODE] = SUB_CODE_LENGTH;
+		inlengtharray[ADD3_CODE] = ADD3_CODE_LENGTH;
+		inlengtharray[SUB3_CODE] = SUB3_CODE_LENGTH;
+		inlengtharray[JNZ_CODE] = JNZ_CODE_LENGTH;
+		inlengtharray[JZ_CODE] = JZ_CODE_LENGTH;
+		inlengtharray[MOV_CODE] = MOV_CODE_LENGTH;
+		inlengtharray[LOAD_CODE] = LOAD_CODE_LENGTH;
+		inlengtharray[LDR_CODE] = LDR_CODE_LENGTH;
+		inlengtharray[STORE_CODE] = STORE_CODE_LENGTH;
+		inlengtharray[STR_CODE] = STR_CODE_LENGTH;
+		inlengtharray[INC_CODE] = INC_CODE_LENGTH;
+		inlengtharray[DCR_CODE] = DCR_CODE_LENGTH;
+		inlengtharray[MVI_CODE] = MVI_CODE_LENGTH;
+		inlengtharray[DISP_CODE] = DISP_CODE_LENGTH;
 
 
 
-		inlengthmapstr["hlt"] = 1;
-		inlengthmapstr["add"] = 3;
-		inlengthmapstr["sub"] = 3;
-		inlengthmapstr["add3"] = 4;
-		inlengthmapstr["sub3"] = 4;
-		inlengthmapstr["jnz"] = 2;
-		inlengthmapstr["jz"] = 2;
-		inlengthmapstr["mov"] = 3;
-		inlengthmapstr["load"] = 3;
-		inlengthmapstr["ldr"] = 3;
-		inlengthmapstr["store"] = 3;
-		inlengthmapstr["str"] = 3;
-		inlengthmapstr["inc"] = 2;
-		inlengthmapstr["dcr"] = 2;
-		inlengthmapstr["mvi"] = 3;
-		inlengthmapstr["disp"] = 2;
+		inlengthmapstr["HLT"] = HLT_CODE_LENGTH;
+		inlengthmapstr["ADD"] = ADD_CODE_LENGTH;
+		inlengthmapstr["SUB"] = SUB_CODE_LENGTH;
+		inlengthmapstr["ADD3"] = ADD3_CODE_LENGTH;
+		inlengthmapstr["SUB3"] = SUB3_CODE_LENGTH;
+		inlengthmapstr["JNZ"] = JNZ_CODE_LENGTH;
+		inlengthmapstr["JZ"] = JZ_CODE_LENGTH;
+		inlengthmapstr["MOV"] = MOV_CODE_LENGTH;
+		inlengthmapstr["LOAD"] = LOAD_CODE_LENGTH;
+		inlengthmapstr["LDR"] = LDR_CODE_LENGTH;
+		inlengthmapstr["STORE"] = STORE_CODE_LENGTH;
+		inlengthmapstr["STR"] = STORE_CODE_LENGTH;
+		inlengthmapstr["INC"] = INC_CODE_LENGTH;
+		inlengthmapstr["DCR"] = DCR_CODE_LENGTH;
+		inlengthmapstr["MVI"] = MVI_CODE_LENGTH;
+		inlengthmapstr["DISP"] = DISP_CODE_LENGTH;
 
+
+		opinmap[HLT_CODE] = "HLT";
+		opinmap[ADD_CODE] = "ADD";
+		opinmap[SUB_CODE] = "SUB";
+		opinmap[ADD3_CODE] = "ADD3";
+		opinmap[SUB3_CODE] = "SUB3";
+		opinmap[JNZ_CODE] = "JNZ";
+		opinmap[JZ_CODE] = "JZ";
+		opinmap[MOV_CODE] = "MOV";
+		opinmap[LOAD_CODE] = "LOAD";
+		opinmap[LDR_CODE] = "LDR";
+		opinmap[STORE_CODE] = "STORE";
+		opinmap[STR_CODE] = "STR";
+		opinmap[INC_CODE] = "INC";
+		opinmap[DCR_CODE] = "DCR";
+		opinmap[MVI_CODE] = "MVI";
+		opinmap[DISP_CODE] = "DISP";
 	}
 
-	unsigned char GetOpcode(char *str, bool *found){
+	unsigned char GetOpcode(char *str, bool *found) {
 		unsigned char opcode = 0xFF;
 		std::string keyToFind(str);
 		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
@@ -103,16 +104,48 @@ public:
 		return opcode;
 	}
 
-	int GetInstructionLengthForOpcode(unsigned char code){
-		int len = 0;
-		std::map<unsigned char, int>::iterator it = inlengthmap.find(code);
-		if (it != inlengthmap.end()) {
-			len = it->second;
+	bool GetOpcodeAndInstrLength(char *str, unsigned char *pOpcode, int *pInstrLength) {
+		unsigned char opcode = 0xFF;
+		std::string keyToFind(str);
+		std::map<std::string, unsigned char>::iterator it = inopmap.find(keyToFind);
+		if (it != inopmap.end()) {
+			opcode = it->second;
+			if (opcode < MAXOPCODES) {
+				*pInstrLength = inlengtharray[opcode];
+				*pOpcode = opcode;
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
-		return len;
+		else {
+			return false;
+		}
 	}
 
-	int GetInstructionLengthForOpcodeFast(unsigned char code) {
+	std::string* GetOpcodeStrAndInstrLength(unsigned char opcode, int* pInstrLength, bool *found) {
+		if (opcode >= MAXOPCODES) {
+			*found = false;
+			return nullptr;
+		}
+		*pInstrLength = inlengtharray[opcode];
+		std::map<unsigned char, std::string>::iterator it = opinmap.find(opcode);
+		if (it != opinmap.end()) {
+			*found = true;
+			return &it->second;
+		}
+		else {
+			*found = false;
+			return nullptr;
+		}
+	}
+
+	inline bool IsValidOpcode(unsigned opcode) {
+		return (opcode < MAXOPCODES);
+	}
+
+	int GetInstructionLengthForOpcode(unsigned char code) {
 		if (code >= MAXOPCODES) {
 			return 0;
 		}

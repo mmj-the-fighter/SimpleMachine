@@ -14,7 +14,6 @@ class SimpleMachineFacade
 {
 	TextFileLoader textFileLoader;
 	RamFileLoader ramFileLoader;
-	InstructionOpcodeMap opcodeMap;
 	Machine machine;
 	Program program;
 	Assembler assembler;
@@ -23,7 +22,6 @@ class SimpleMachineFacade
 
 public:
 	SimpleMachineFacade(){
-		program.SetInstructionOpcodeMap(&opcodeMap);
 		assembler.Set(&textFileLoader, &program);
 		loadingOffset = 0;
 	}

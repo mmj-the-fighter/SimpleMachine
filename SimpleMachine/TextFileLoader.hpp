@@ -58,7 +58,7 @@ public:
 
 		bufferLength = str.size();
 		buffer = new char[bufferLength + 1];
-		std::transform(str.begin(), str.end(), buffer, ::tolower);
+		std::transform(str.begin(), str.end(), buffer, ::toupper);
 		buffer[bufferLength] = '\0';
 
 		//std::cout << buffer << std::endl;

@@ -11,62 +11,27 @@ class Program
 private:
 	unsigned char byteCode[MAXMEMBYTES];
 	int currentMarker;
-	InstructionOpcodeMap *imap;
 	int loadingOffset;
 public:
 	Program()
 	{
 		loadingOffset = 0;
 		currentMarker = 0;
-		imap = NULL;
 		for (int i = 0; i < MAXMEMBYTES; i++) {
 			byteCode[i] = 0;
 		}
-	}
-	Program(InstructionOpcodeMap *map)
-	{
-		loadingOffset = 0;
-		currentMarker = 0;
-		imap = map;
-		for (int i = 0; i < MAXMEMBYTES; i++) {
-			byteCode[i] = 0;
-		}
-	}
-
-	void SetInstructionOpcodeMap(InstructionOpcodeMap *map){
-		imap = map;
 	}
 
 	void Clear(){
 		currentMarker = 0;
 	}
 
-	bool GetOpcodeAndLength(char *opcodeStr, unsigned char* opcode, int *len){
-		bool found;
-		*opcode = imap->GetOpcode(opcodeStr, &found);
-		if (found) {
-			*len = imap->GetInstructionLengthForOpcode(*opcode);
+	inline bool AdvanceMarker(int instrLength){
+		if (currentMarker+ instrLength > MAXMEMBYTES - 1){
+			return false;
 		}
-		return found;
-	}
-
-	bool IsOpcode(char *opcodeStr) {
-		bool found;
-		imap->GetOpcode(opcodeStr,&found);
-		return found;
-	}
-
-	inline int GetInstructionLength(unsigned char opcode) {
-		return imap->GetInstructionLengthForOpcodeFast(opcode);
-		//return imap->GetInstructionLengthForOpcode(opcode);
-	}
-
-	inline void WriteInstructionFirstPass(char *opcodeStr){
-		int instrLen = imap->GetInstructionLengthForOpcodeStr(opcodeStr);
-		if (currentMarker >= MAXMEMBYTES - instrLen){
-			return;
-		}
-		currentMarker = currentMarker + instrLen;
+		currentMarker = currentMarker + instrLength;
+		return true;
 	}
 
 	inline void WriteCode1Byte(unsigned char byte1){
@@ -106,7 +71,6 @@ public:
 		currentMarker += 3;
 	}
 
-
 	inline void WriteCode4Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4){
 		if (currentMarker >= MAXMEMBYTES - 4){
 			return;
@@ -128,7 +92,6 @@ public:
 		byteCode[currentMarker + 3] = r->r3;
 		currentMarker += 4;
 	}
-
 	
 	inline int GetCurrentMarker() {
 		return currentMarker;
@@ -145,8 +108,6 @@ public:
 	inline int GetLoadingOffset() {
 		return loadingOffset;
 	}
-
-	
 };
 
 #endif

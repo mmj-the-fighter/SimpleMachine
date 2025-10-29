@@ -12,9 +12,10 @@ class Assembler
 {
 	TextFileLoader* tfLoader;
 	Program* program;
-	SymbolTable table;
+	SymbolTable labelTable;
 	SymbolTable registerTable;
 	RegisterHelper registerHelper;
+	InstructionOpcodeMap inOpMap;
 public:
 	Assembler(TextFileLoader* loader, Program* prog){
 		program = prog;
@@ -104,6 +105,10 @@ private:
 		char c = buffer[i];
 		char opcodestr[BUFFERLENGTH];
 		bool isLabel = false;
+		unsigned char opcode;
+		int instrLength;
+		bool found;
+		//read a line
 		while (k < BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalpha(c) || c == ':')){
 			opcodestr[k] = c;
 			++k;
@@ -125,33 +130,40 @@ private:
 		if (c == '#') {
 			return true;
 		}
-		opcodestr[k] = '\0';
-		if (isLabel){
+		
+		if (isLabel) {
 			--k;
 			if (k < 0) {
 				return false;
 			}
 			opcodestr[k] = '\0';
-			bool found = program->IsOpcode(opcodestr);
-			if (found) {
+		}
+		else {
+			opcodestr[k] = '\0';
+		}
+
+		bool isInstr = inOpMap.GetOpcodeAndInstrLength(opcodestr, &opcode, &instrLength);
+		if (isInstr) {
+			if (isLabel) {
 				std::cout << "opcode " << opcodestr << " cannot be label\n";
 				return false;
 			}
-			table.Lookup(opcodestr, &found);
+			program->AdvanceMarker(instrLength);
+			return true;
+		}
+		else if (isLabel) {
+			labelTable.Lookup(opcodestr, &found);
 			if (found) {
 				std::cout << "label " << opcodestr << " is already used\n";
 				return false;
 			}
-			registerTable.Lookup(opcodestr, &found);
-			if (found) {
-				std::cout << "register " << opcodestr << " cannot be label\n";
-				return false;
-			}
-			table.AddLabel(opcodestr, program->GetCurrentMarker());
+			labelTable.AddLabel(opcodestr, program->GetCurrentMarker());
 			return true;
 		}
-		program->WriteInstructionFirstPass(opcodestr);
-		return true;
+		else {
+			std::cout << "unidentified instruction" << opcodestr << "found\n";
+			return false;
+		}
 	}
 
 	bool AssembleByteCode(char* buffer) {
@@ -200,8 +212,8 @@ private:
 
 		unsigned char opcode;
 		int instructionLength;
-		program->GetOpcodeAndLength(opcodestr, &opcode, &instructionLength);
-		if (instructionLength < 1 || instructionLength > 4) {
+		bool isInstr = inOpMap.GetOpcodeAndInstrLength(opcodestr, &opcode, &instructionLength);
+		if (!isInstr) {
 			return false;
 		}
 
@@ -245,7 +257,7 @@ private:
 			break;
 		case JNZ_CODE:
 		case JZ_CODE:
-			address = table.Lookup(&operandArray[0][0], &found);
+			address = labelTable.Lookup(&operandArray[0][0], &found);
 			if (!found) {
 				return false;
 			}

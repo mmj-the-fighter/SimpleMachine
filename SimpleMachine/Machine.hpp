@@ -13,6 +13,7 @@ struct Machine{
 	unsigned char memory[MAXMEMBYTES];
 	Program* program;
 	bool zeroFlag;
+	InstructionOpcodeMap inOpMap;
 	
 
 	Machine(){
@@ -107,7 +108,7 @@ struct Machine{
 			if (opcode == HLT_CODE){
 				break;
 			}
-			int instrLen = program->GetInstructionLength(opcode);
+			int instrLen = inOpMap.GetInstructionLengthForOpcode(opcode);
 			if (instrLen == 0){
 				std::cout << "Unexpected program failure!\n";
 				break;
