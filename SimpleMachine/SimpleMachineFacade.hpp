@@ -89,8 +89,9 @@ public:
 	}
 
 	void ShowMachine() {
-		machine.ShowRegisters();
-		machine.ShowMemory();
+		machine.WriteRegistersOnPrinterBuffer();
+		machine.WriteMemoryOnPrinterBuffer();
+		machine.Print();
 	}
 };
 

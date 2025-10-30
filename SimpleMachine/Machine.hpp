@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "InstructionOpcodeMap.hpp"
+#include "TextPrinter.hpp"
 #include "Program.hpp"
 #include "CommonDefs.h"
 
@@ -20,7 +21,7 @@ struct Machine{
 	unsigned char memory[MAXMEMBYTES];
 	Program* program;
 	bool zeroFlag;
-	
+	TextPrinter textPrinter;
 
 	Machine(){
 		zeroFlag = false;
@@ -58,8 +59,7 @@ struct Machine{
 		if (startAddress < 0  || startAddress >= MAXMEMBYTES || numberOfBytes <= 0) {
 			return false;
 		}
-		int endAddress = startAddress + numberOfBytes - 1;
-		if (endAddress >= MAXMEMBYTES) {
+		if (startAddress + numberOfBytes - 1 >= MAXMEMBYTES) {
 			return false;
 		}
 		memcpy(bytes, &memory[startAddress], numberOfBytes);
@@ -117,6 +117,7 @@ struct Machine{
 		unsigned char op2 = 0;
 		unsigned char op3 = 0;
 		unsigned char temp;
+		textPrinter.Clear();
 
 		FailureType failureType;
 		if (NULL == program) {
@@ -181,7 +182,7 @@ struct Machine{
 				}
 				break;
 			}
-			int acc = regs[0];
+			unsigned char acc = regs[0];
 			pcIncremented = false;
 			switch (opcode){
 			case ADD1_CODE:
@@ -402,7 +403,8 @@ struct Machine{
 				break;
 			case DISP_CODE:
 				if (isOp1WithinRegLimits) {
-					std::cout << (int)regs[op1] << "\n";
+					textPrinter.AddInt((int)regs[op1]);
+					textPrinter.AddChar('\n');
 				}
 				else {
 					failureType = INVALID_REG;
@@ -426,48 +428,59 @@ struct Machine{
 	errexit:
 		switch (failureType) {
 		case BAD_ACCESS:
-			std::cout << "Invalid memory address calculated: Aborting interpretation!\n";
+			textPrinter.AddConstCString("Invalid memory address calculated: Aborting interpretation!\n");
 			break;
 		case INVALID_OPCODE:
-			std::cout << "Invalid opcode " << (int)opcode << " found: Aborting interpretation!\n";
+			textPrinter.AddConstCString("Invalid opcode ");
+			textPrinter.AddInt((int)opcode);
+			textPrinter.AddConstCString(" found: Aborting interpretation!\n");
 			break;
 		case INVALID_REG:
-			std::cout << "Invalid register address calculated: Aborting interpretation!\n";
+			textPrinter.AddConstCString("Invalid register address calculated: Aborting interpretation!\n");
 			break;
 		case INVALID_PROGRAM:
-			std::cout << "Null or Invalid program: Aborting interpretation!\n";
+			textPrinter.AddConstCString("Null or Invalid program: Aborting interpretation!\n");
 			break;
 		default:
-			std::cout << "Unexpectd error: Aborting interpretation!\n";
+			textPrinter.AddConstCString("Unexpectd error: Aborting interpretation!\n");
 			break;
 		}
 
-		ShowRegisters();
-		ShowMemory();
-
+		WriteRegistersOnPrinterBuffer();
+		WriteMemoryOnPrinterBuffer();
+		Print();
 		return false;
 	}
 
-	void ShowMemory(){
-		std::cout << "Memory\n";
+	void Print() {
+		textPrinter.PrintAndFlush();
+	}
+
+	void WriteMemoryOnPrinterBuffer(){
+		textPrinter.AddConstCString("Memory\n");
 		for (int i = 0; i < 4; i++) {
-			std::cout << (int)memory[i] << "\t";
+			textPrinter.AddInt((int)memory[i]);
+			textPrinter.AddChar('\t');
 		}
 		for (int i = 4; i < MAXMEMBYTES; i++){
 			if (i%4 == 0){
-				std::cout << '\n';
+				textPrinter.AddChar('\n');
 			}
-			std::cout << (int)memory[i] << "\t";
+			textPrinter.AddInt((int)memory[i]);
+			textPrinter.AddChar('\t');
 		}
-		std::cout << '\n';
+		textPrinter.AddChar('\n');
 	}
 
-	void ShowRegisters() {
-		std::cout << "Registers\n";
+	void WriteRegistersOnPrinterBuffer() {
+		textPrinter.AddConstCString("Registers\n");
 		for (int i = 0; i < MAXREGS; i++) {
-			std::cout << "reg" << i << " : " << (int)regs[i] << '\n';
+			textPrinter.AddInt(i);
+			textPrinter.AddChar(' ');
+			textPrinter.AddInt((int)regs[i]);
+			textPrinter.AddChar('\n');
 		}
-		std::cout << '\n';
+		textPrinter.AddChar('\n');
 	}
 };
 
