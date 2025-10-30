@@ -255,6 +255,8 @@ private:
 		case INC_CODE:
 		case DCR_CODE:
 		case DISP_CODE:
+		case ADD1_CODE:
+		case SUB1_CODE:
 			if (oper1Len != 1) {
 				std::cout << "Invalid Register ";
 				return false;

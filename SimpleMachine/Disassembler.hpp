@@ -168,6 +168,8 @@ public:
 				case INC_CODE:
 				case DCR_CODE:
 				case DISP_CODE:
+				case ADD1_CODE:
+				case SUB1_CODE:
 					operand = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						badAccess = true;

@@ -32,6 +32,8 @@ private:
 		inopmap["DCR"] = DCR_CODE;
 		inopmap["MVI"] = MVI_CODE;
 		inopmap["DISP"] = DISP_CODE;
+		inopmap["ADD1"] = ADD1_CODE;
+		inopmap["SUB1"] = SUB1_CODE;
 
 		opinmap[HLT_CODE] = "HLT";
 		opinmap[ADD2_CODE] = "ADD2";
@@ -49,6 +51,9 @@ private:
 		opinmap[DCR_CODE] = "DCR";
 		opinmap[MVI_CODE] = "MVI";
 		opinmap[DISP_CODE] = "DISP";
+		opinmap[ADD1_CODE] = "ADD1";
+		opinmap[SUB1_CODE] = "SUB1";
+
 
 		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
 		inlengtharray[ADD2_CODE] = ADD2_CODE_LENGTH;
@@ -66,6 +71,9 @@ private:
 		inlengtharray[DCR_CODE] = DCR_CODE_LENGTH;
 		inlengtharray[MVI_CODE] = MVI_CODE_LENGTH;
 		inlengtharray[DISP_CODE] = DISP_CODE_LENGTH;
+		inlengtharray[ADD1_CODE] = ADD1_CODE_LENGTH;
+		inlengtharray[SUB1_CODE] = SUB1_CODE_LENGTH;
+
 	}
 
 public:

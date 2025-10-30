@@ -133,26 +133,50 @@ struct Machine{
 				op3 = memory[pc + 3];
 				break;
 			}
-				
+			int acc = regs[0];
 			switch (opcode){
+			case ADD1_CODE:
+				acc += regs[op1];
+				if (acc == 0) {
+					zeroFlag = true;
+				}
+				else {
+					zeroFlag = false;
+				}
+				regs[0] = acc;
+				pc += instrLen;
+				break;
+			case SUB1_CODE:
+				acc -= regs[op1];
+				if (acc == 0) {
+					zeroFlag = true;
+				}
+				else {
+					zeroFlag = false;
+				}
+				regs[0] = acc;
+				pc += instrLen;
+				break;
 			case ADD2_CODE:
-				regs[0] = regs[op1] + regs[op2];
-				if (regs[0] == 0){
+				acc = regs[op1] + regs[op2];
+				if (acc == 0){
 					zeroFlag = true;
 				}
 				else{
 					zeroFlag = false;
 				}
+				regs[0] = acc;
 				pc += instrLen;
 				break;
 			case SUB2_CODE:
-				regs[0] = regs[op1] - regs[op2];
-				if (regs[0] == 0){
+				acc = regs[op1] - regs[op2];
+				if (acc == 0){
 					zeroFlag = true;
 				}
 				else{
 					zeroFlag = false;
 				}
+				regs[0] = acc;
 				pc += instrLen;
 				break;
 			case JNZ_CODE:
