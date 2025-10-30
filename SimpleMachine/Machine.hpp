@@ -7,6 +7,13 @@
 #include "Program.hpp"
 #include "CommonDefs.h"
 
+enum FailureType {
+	BAD_ACCESS,
+	INVALID_OPCODE,
+	INVALID_REG,
+	INVALID_PROGRAM,
+};
+
 struct Machine{
 	unsigned char regs[MAXREGS];
 	unsigned char pc;
@@ -100,173 +107,345 @@ struct Machine{
 	}
 
 	bool InterpretProgram() {
-		if (NULL == program) {
-			return false;
-		}
 		unsigned char loadingOffset = program->GetLoadingOffset();
+		unsigned char opcode;
+		bool pcIncremented = false;
+		bool isOp1WithinRegLimits = true;
+		bool isOp2WithinRegLimits = true;
+		bool isOp3WithinRegLimits = true;
+		unsigned char op1 = 0;
+		unsigned char op2 = 0;
+		unsigned char op3 = 0;
+		unsigned char temp;
+
+		FailureType failureType;
+		if (NULL == program) {
+			failureType = INVALID_PROGRAM;
+			goto errexit;
+		}
+
+		//uncomment these to test edge cases
+		//pc = 0xFF;
+		//loadingOffset = 0xFF;
+
 		do{
-			unsigned char opcode = memory[pc];
-			unsigned char op1 = 0;
-			unsigned char op2 = 0;
-			unsigned char op3 = 0;
+			opcode = memory[pc];
 			if (opcode == HLT_CODE){
 				return true;
 			}
+
+			//uncomment this to test edge case
 			//opcode = 0xff;
+
 			unsigned char instrLen = InstructionOpcodeMap::GetInstance()
 				.GetInstructionLengthForOpcode(opcode);
 			if (instrLen == 0){
-				std::cout << "Invalid opcode "<<(int)opcode<<" found: Aborting interpretation!\n";
-				return false;
+				failureType = INVALID_OPCODE;
+				goto errexit;
 			}
 			switch (instrLen){
 			case 2:
-				op1 = memory[pc + 1];
+				if (pc + 1 < MAXMEMBYTES) {
+					op1 = memory[pc + 1];
+					isOp1WithinRegLimits = op1 < MAXREGS;
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
 				break;
 			case 3:
-				op1 = memory[pc + 1];
-				op2 = memory[pc + 2];
+				if (pc + 2 < MAXMEMBYTES) {
+					op1 = memory[pc + 1];
+					op2 = memory[pc + 2];
+					isOp1WithinRegLimits = op1 < MAXREGS;
+					isOp2WithinRegLimits = op2 < MAXREGS;
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
 				break;
 			case 4:
-				op1 = memory[pc + 1];
-				op2 = memory[pc + 2];
-				op3 = memory[pc + 3];
+				if (pc + 3 < MAXMEMBYTES) {
+					op1 = memory[pc + 1];
+					op2 = memory[pc + 2];
+					op3 = memory[pc + 3];
+					isOp1WithinRegLimits = op1 < MAXREGS;
+					isOp2WithinRegLimits = op2 < MAXREGS;
+					isOp3WithinRegLimits = op3 < MAXREGS;
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
 				break;
 			}
 			int acc = regs[0];
+			pcIncremented = false;
 			switch (opcode){
 			case ADD1_CODE:
-				acc += regs[op1];
-				if (acc == 0) {
-					zeroFlag = true;
+				if (isOp1WithinRegLimits) {
+					acc += regs[op1];
+					if (acc == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
+					regs[0] = acc;
 				}
 				else {
-					zeroFlag = false;
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				regs[0] = acc;
-				pc += instrLen;
 				break;
 			case SUB1_CODE:
-				acc -= regs[op1];
-				if (acc == 0) {
-					zeroFlag = true;
+				if (isOp1WithinRegLimits) {
+					acc -= regs[op1];
+					if (acc == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
+					regs[0] = acc;
 				}
 				else {
-					zeroFlag = false;
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				regs[0] = acc;
-				pc += instrLen;
 				break;
 			case ADD2_CODE:
-				acc = regs[op1] + regs[op2];
-				if (acc == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits && isOp2WithinRegLimits) {
+					acc = regs[op1] + regs[op2];
+					if (acc == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
+					regs[0] = acc;
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				regs[0] = acc;
-				pc += instrLen;
 				break;
 			case SUB2_CODE:
-				acc = regs[op1] - regs[op2];
-				if (acc == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits && isOp2WithinRegLimits) {
+					acc = regs[op1] - regs[op2];
+					if (acc == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
+					regs[0] = acc;
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				regs[0] = acc;
-				pc += instrLen;
 				break;
 			case JNZ_CODE:
 				if (!zeroFlag) {
-					pc = op1+loadingOffset;
-				}
-				else{
-					pc += instrLen;
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
 				}
 				break;
 			case JZ_CODE:
 				if (zeroFlag) {
-					pc = op1+loadingOffset;
-				}
-				else{
-					pc += instrLen;
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
 				}
 				break;
 			case MOV_CODE:
-				regs[op1] = regs[op2];
-				pc += instrLen;
+				if (isOp1WithinRegLimits && isOp2WithinRegLimits) {
+					regs[op1] = regs[op2];
+				}
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
 				break;
 			case LOAD_CODE:
+				if (op2 >= MAXMEMBYTES) {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
+				else if (!isOp1WithinRegLimits) {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
 				regs[op1] = memory[op2];
-				pc += instrLen;
 				break;
 			case LDR_CODE:
-				regs[op1] = memory[regs[op2]];
-				pc += instrLen;
+				if (!isOp1WithinRegLimits || !isOp2WithinRegLimits) {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
+				temp = regs[op2];
+				if (temp < MAXMEMBYTES) {
+					regs[op1] = memory[temp];
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
 				break;
 			case STORE_CODE:
+				if (op2 > MAXMEMBYTES) {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
+				else if (!isOp1WithinRegLimits) {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
 				memory[op2] = regs[op1];
-				pc += instrLen;
 				break;
 			case STR_CODE:
-				memory[regs[op2]] = regs[op1];
-				pc += instrLen;
+				if (!isOp1WithinRegLimits || !isOp2WithinRegLimits) {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
+				temp = regs[op2];
+				if (temp < MAXMEMBYTES) {
+					memory[temp] = regs[op1];
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
 				break;
 			case INC_CODE:
-				regs[op1] += 1;
-				if (regs[op1] == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits) {
+					regs[op1] += 1;
+					if (regs[op1] == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				pc += instrLen;
 				break;
 			case DCR_CODE:
-				regs[op1] -= 1;
-				if (regs[op1] == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits) {
+					regs[op1] -= 1;
+					if (regs[op1] == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				pc += instrLen;
 				break;
 			case MVI_CODE:
-				regs[op1] = op2;
-				pc += instrLen;
+				if (isOp1WithinRegLimits) {
+					regs[op1] = op2;
+				}
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
 				break;
 			case ADD3_CODE:
-				regs[op1] = regs[op2] + regs[op3];
-				if (regs[op1] == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits && isOp2WithinRegLimits && isOp3WithinRegLimits) {
+					regs[op1] = regs[op2] + regs[op3];
+					if (regs[op1] == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				pc += instrLen;
 				break;
 			case SUB3_CODE:
-				regs[op1] = regs[op2] - regs[op3];
-				if (regs[op1] == 0){
-					zeroFlag = true;
+				if (isOp1WithinRegLimits && isOp2WithinRegLimits && isOp3WithinRegLimits) {
+					regs[op1] = regs[op2] - regs[op3];
+					if (regs[op1] == 0) {
+						zeroFlag = true;
+					}
+					else {
+						zeroFlag = false;
+					}
 				}
-				else{
-					zeroFlag = false;
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
 				}
-				pc += instrLen;
 				break;
 			case DISP_CODE:
-				std::cout << (int)regs[op1] << "\n";
-				pc += instrLen;
+				if (isOp1WithinRegLimits) {
+					std::cout << (int)regs[op1] << "\n";
+				}
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
 				break;
+			default:
+				failureType = INVALID_OPCODE;
+				goto errexit;
 			}
-			
+			if (!pcIncremented) {
+				if (pc + instrLen < MAXMEMBYTES) {
+					pc += instrLen;
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
+			}
 		} while (true);
-		return true;
+	errexit:
+		switch (failureType) {
+		case BAD_ACCESS:
+			std::cout << "Invalid memory address calculated: Aborting interpretation!\n";
+			break;
+		case INVALID_OPCODE:
+			std::cout << "Invalid opcode " << (int)opcode << " found: Aborting interpretation!\n";
+			break;
+		case INVALID_REG:
+			std::cout << "Invalid register address calculated: Aborting interpretation!\n";
+			break;
+		case INVALID_PROGRAM:
+			std::cout << "Null or Invalid program: Aborting interpretation!\n";
+			break;
+		default:
+			std::cout << "Unexpectd error: Aborting interpretation!\n";
+			break;
+		}
+
+		ShowRegisters();
+		ShowMemory();
+
+		return false;
 	}
 
 	void ShowMemory(){

@@ -27,7 +27,7 @@ public:
 	}
 
 	bool TranslateAssembly(const char* asmFileName) {
-		util::ProfilerScope prof(110);
+		util::ProfilerScope prof(1000);
 		bool res = textFileLoader.LoadTextFromFile(asmFileName);
 
 		if (!res) {
@@ -43,14 +43,14 @@ public:
 		return true;
 	}
 	bool InterpretProgram() {
-		util::ProfilerScope prof(210);
+		util::ProfilerScope prof(2000);
 		loadingOffset = 8;
 		machine.LoadProgram(loadingOffset, &program);
 		return machine.InterpretProgram();
 	}
 
 	bool Disassemble() {
-		util::ProfilerScope prof(310);
+		util::ProfilerScope prof(3000);
 		disassembler.Set(&machine, loadingOffset);
 		return disassembler.Translate();
 	}
