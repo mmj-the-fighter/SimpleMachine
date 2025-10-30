@@ -31,13 +31,15 @@ It acts as a minimal CPU with a basic assembler, disassembler, and simulator.
 | Mnemonic | Description | Example |
 |:----------|:-------------|:---------|
 | **HLT** | Stop execution | `HLT` |
-| **ADD** | Add contents of two registers and store in register `A` | `ADD B C` |
-| **SUB** | Subtract contents of operand2 from operand1, store in `A` | `SUB B C` |
-| **ADD3** | Add two registers and store result in operand1 | `ADD3 A B C` |
-| **SUB3** | Subtract operand3 from operand2, store in operand1 | `SUB3 A B C` |
+| **ADD1** | Add contents of a register to `A` and store in register `A` | `ADD B C` |
+| **SUB1** | Subtract contents of a register from register `A` and store in `A` | `SUB B C` |
+| **ADD2** | Add contents of two registers and store in register `A` | `ADD B C` |
+| **SUB2** | Subtract contents of register indicated by operand2 from that by operand1, store in `A` | `SUB B C` |
+| **ADD3** | Add two registers and store result in register indicated by operand1 | `ADD3 A B C` |
+| **SUB3** | Subtract register indicated by operand3 from that by operand2, store in register indicatd by operand1 | `SUB3 A B C` |
 | **JNZ** | Jump if zero flag **not** set | `JNZ LOOP` |
 | **JZ** | Jump if zero flag **is** set | `JZ LOOP` |
-| **MOV** | Copy value from operand2 to operand1 | `MOV A B` |
+| **MOV** | Copy value from register indicated by operand2 to that by operand1 | `MOV A B` |
 | **LOAD** | Load value from memory address into register | `LOAD A 100` |
 | **LDR** | Load from memory address contained in register(operand2) | `LDR A B` |
 | **STORE** | Store register value to a specific memory address | `STORE A 200` |
@@ -68,4 +70,5 @@ DISP C
 HLT
 ```
 
-
+### Note
+AI is used for writing this README.md 
