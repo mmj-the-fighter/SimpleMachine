@@ -86,7 +86,7 @@ private:
 		unsigned char instrLength;
 		bool found;
 		//read a line
-		while (k < BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalpha(c) || c == ':')){
+		while (k < BUFFERLENGTH-1 && c != '#' && c != '\0' && (isalnum(c) || c == ':')){
 			opcodestr[k] = c;
 			++k;
 			++i;
