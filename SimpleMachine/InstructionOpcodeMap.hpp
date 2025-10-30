@@ -17,8 +17,8 @@ private:
 	std::map<unsigned char, std::string> opinmap;
 	InstructionOpcodeMap() {
 		inopmap["HLT"] = HLT_CODE;
-		inopmap["ADD"] = ADD_CODE;
-		inopmap["SUB"] = SUB_CODE;
+		inopmap["ADD2"] = ADD2_CODE;
+		inopmap["SUB2"] = SUB2_CODE;
 		inopmap["ADD3"] = ADD3_CODE;
 		inopmap["SUB3"] = SUB3_CODE;
 		inopmap["JNZ"] = JNZ_CODE;
@@ -34,8 +34,8 @@ private:
 		inopmap["DISP"] = DISP_CODE;
 
 		opinmap[HLT_CODE] = "HLT";
-		opinmap[ADD_CODE] = "ADD";
-		opinmap[SUB_CODE] = "SUB";
+		opinmap[ADD2_CODE] = "ADD2";
+		opinmap[SUB2_CODE] = "SUB2";
 		opinmap[ADD3_CODE] = "ADD3";
 		opinmap[SUB3_CODE] = "SUB3";
 		opinmap[JNZ_CODE] = "JNZ";
@@ -51,8 +51,8 @@ private:
 		opinmap[DISP_CODE] = "DISP";
 
 		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
-		inlengtharray[ADD_CODE] = ADD_CODE_LENGTH;
-		inlengtharray[SUB_CODE] = SUB_CODE_LENGTH;
+		inlengtharray[ADD2_CODE] = ADD2_CODE_LENGTH;
+		inlengtharray[SUB2_CODE] = SUB2_CODE_LENGTH;
 		inlengtharray[ADD3_CODE] = ADD3_CODE_LENGTH;
 		inlengtharray[SUB3_CODE] = SUB3_CODE_LENGTH;
 		inlengtharray[JNZ_CODE] = JNZ_CODE_LENGTH;

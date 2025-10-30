@@ -265,8 +265,8 @@ private:
 			}
 			program->WriteCode2Bytes(opcode, regAddr);
 			break;
-		case ADD_CODE:
-		case SUB_CODE:
+		case ADD2_CODE:
+		case SUB2_CODE:
 		case MOV_CODE:
 		case LDR_CODE:
 		case STR_CODE:

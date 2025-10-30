@@ -135,7 +135,7 @@ struct Machine{
 			}
 				
 			switch (opcode){
-			case ADD_CODE:
+			case ADD2_CODE:
 				regs[0] = regs[op1] + regs[op2];
 				if (regs[0] == 0){
 					zeroFlag = true;
@@ -145,7 +145,7 @@ struct Machine{
 				}
 				pc += instrLen;
 				break;
-			case SUB_CODE:
+			case SUB2_CODE:
 				regs[0] = regs[op1] - regs[op2];
 				if (regs[0] == 0){
 					zeroFlag = true;
