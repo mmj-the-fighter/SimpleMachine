@@ -132,7 +132,6 @@
     <ClInclude Include="Disassembler.hpp" />
     <ClInclude Include="InstructionOpcodeMap.hpp" />
     <ClInclude Include="Machine.hpp" />
-    <ClInclude Include="OpcodeInstructionMap.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="RamFileLoader.hpp" />

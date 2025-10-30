@@ -19,7 +19,6 @@ set(HEADERS
     Assembler.hpp
     Machine.hpp
 	Disassembler.hpp
-    OpcodeInstructionMap.hpp
 	RevSymbolTable.hpp
 	Profiler.hpp
 	RegisterHelper.hpp

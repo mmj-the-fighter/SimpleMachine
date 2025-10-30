@@ -45,9 +45,6 @@
     <ClInclude Include="RevSymbolTable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpcodeInstructionMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Profiler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
