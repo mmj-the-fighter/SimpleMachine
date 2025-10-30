@@ -132,6 +132,7 @@ struct Machine{
 		do{
 			opcode = memory[pc];
 			if (opcode == HLT_CODE){
+				textPrinter.PrintAndFlush();
 				return true;
 			}
 
