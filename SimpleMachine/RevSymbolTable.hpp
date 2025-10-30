@@ -26,13 +26,5 @@ public:
 		}
 	}
 
-	void Display() {
-		std::map<int, std::string>::const_iterator it;
-		for (it = data.begin(); it != data.end(); ++it)
-		{
-			std::cout << "Key:\t" << it->first << "\tValue:\t" << it->second << "\n";
-		}
-	}
-
 };
 #endif
