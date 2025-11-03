@@ -26,28 +26,37 @@ It acts as a minimal CPU with a basic assembler, disassembler, and simulator.
 
 ---
 
-## Supported Instructions
+## Supported / Planned instructions with usage, action and status
 
-| Mnemonic | Description | Example |
-|:----------|:-------------|:---------|
-| **HLT** | Stop execution | `HLT` |
-| **ADD1** | Add contents of a register to `A` and store in register `A` | `ADD B C` |
-| **SUB1** | Subtract contents of a register from register `A` and store in `A` | `SUB B C` |
-| **ADD2** | Add contents of two registers and store in register `A` | `ADD B C` |
-| **SUB2** | Subtract contents of register indicated by operand2 from that by operand1, store in `A` | `SUB B C` |
-| **ADD3** | Add two registers and store result in register indicated by operand1 | `ADD3 A B C` |
-| **SUB3** | Subtract register indicated by operand3 from that by operand2, store in register indicatd by operand1 | `SUB3 A B C` |
-| **JNZ** | Jump if zero flag **not** set | `JNZ LOOP` |
-| **JZ** | Jump if zero flag **is** set | `JZ LOOP` |
-| **MOV** | Copy value from register indicated by operand2 to that by operand1 | `MOV A B` |
-| **LOAD** | Load value from memory address into register | `LOAD A 100` |
-| **LDR** | Load from memory address contained in register(operand2) | `LDR A B` |
-| **STORE** | Store register value to a specific memory address | `STORE A 200` |
-| **STR** | Store register value to memory address in another register(operand2) | `STR A B` |
-| **INC** | Increment a register | `INC B` |
-| **DCR** | Decrement a register | `DCR C` |
-| **MVI** | Move immediate value into register | `MVI A 20` |
-| **DISP** | Display the numeric value of a register | `DISP A` |
+| Mnemonic | Format |Description | Example | Status |
+|:----------|:-------------|:-------------|:---------|:---------| 
+| **HLT** | `HLT` | Stop execution | `HLT` |[/]|
+| **ADD1** | `ADD1 reg` | [A] = [A] + reg  | `ADD1 B` |[/]|
+| **SUB1** | `SUB1 reg` | [A] = [A] - reg  | `SUB1 B`|[/]|
+| **ADD2** | `ADD2 reg1 reg2` | [A] = reg1  + reg2  | `ADD2 C D` |[/]|
+| **SUB2** | `SUB2 reg1 reg2` | [A] =  reg1  - reg2  | `SUB2 C D` |[/]|
+| **ADD3** | `ADD3 reg1 reg2 reg3` | reg1 =  reg2  + reg3  | `ADD3 C D E` |[/]|
+| **SUB3** | `SUB3 reg1 reg2 reg3` | reg1 =  reg2  - reg3  | `SUB3 C D E` |[/]|
+| **JZ** | `JZ label` | set pc = label_address if zero flag **is** set | `JZ LOOP` |[/]|
+| **JNZ** | `JNZ label` | set pc = label_address if zero flag **not** set | `JNZ LOOP` |[/]|
+| **CMP** | `CMP reg1 reg2` | temp = reg1 - reg2; affect_condition_codes(temp)  | `CMP A B` |[X]|
+| **JEQ** | `JEQ oper` | set pc = label_address if condition code is  **is** `==` | `JEQ LOOP` |[X]|
+| **JNEQ** | `JNEQ oper` | set pc = label_address if condition code **is not** `==` | `JNEQ LOOP` |[X]|
+| **JLT** | `JLT oper` | set pc = label_address if condition code **is** `<` | `JLT LOOP` |[X]|
+| **JGT** | `JGT oper` | set pc = label_address if condition code **is** `>` | `JGT LOOP` |[X]|
+| **MOV** | `MOV reg1 reg2`| reg1 = reg2 | `MOV A B` |[/]|
+| **LOAD** | `LOAD reg address` | reg = memory[address] | `LOAD A 100` |[/]|
+| **LDR** | `LDR reg1 reg2` | reg1 = memory[reg2] | `LDR A B` |[/]|
+| **STORE** | `STORE reg address` | memory[address]  = reg | `STORE A 100` |[/]|
+| **STR** | `STR reg1 reg2` | memory[reg2]  = reg1 | `LDR A B` |[/]|
+| **INC** | `INC reg` | reg = reg + 1 | `INC B` |[/]|
+| **DCR** | `DCR reg` | reg = reg - 1 | `DCR B` |[/]|
+| **MVI** | `MVI reg value` | reg = value | `MVI A 20` |[/]|
+| **DISP** | `DISP reg` | Print the reg | `DISP A` |[/]|
+| **PUSH** | `PUSH reg` | Push reg on stack | `PUSH A` |[X]|
+| **POP** | `POP reg` | POP top of the stack to reg | `POP A` |[X]|
+| **CALL** | `CALL label` | jump to subroutine indicated by label_address | `CALL FACTORIAL` |[X]|
+| **RET** | `RET` | return from subroutine | `RET` |[X]|
 
 ---
 
