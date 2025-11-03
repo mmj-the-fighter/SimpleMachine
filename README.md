@@ -80,4 +80,4 @@ HLT
 ```
 
 ### Note
-AI is used for writing this README.md 
+This README has been written with the help of AI for formatting and some descriptions.
