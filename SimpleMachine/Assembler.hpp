@@ -75,6 +75,26 @@ public:
 	}
 
 private:
+	bool isSameString(char* str1, int maxLen, const char* str2) {
+		int i = 0;
+		bool isSame = true;
+		while (true) {
+			char c1 = str1[i];
+			char c2 = str2[i];
+			if (c1 != c2) {
+				isSame = false;
+				break;
+			}
+			++i;
+			if (i > maxLen - 1) {
+				break;
+			}
+			if (c1 == '\0' || c2 == '\0') {
+				break;
+			}
+		}
+		return isSame;
+	}
 	//returns false if buffer is overflowed
 	bool StoreSymbolIfAny(char* buffer){
 		int i = 0;
@@ -134,6 +154,9 @@ private:
 			if (found) {
 				std::cout << "label " << opcodestr << " is already used\n";
 				return false;
+			}
+			if (isSameString(opcodestr, BUFFERLENGTH, "MAIN")) {
+				program->SetCurrentMarkerAsMainOffset();
 			}
 			labelTable.AddLabel(opcodestr, program->GetCurrentMarker());
 			return true;
@@ -241,8 +264,10 @@ private:
 		bool found;
 		switch (opcode) {
 		case HLT_CODE:
+		case RET_CODE:
 			program->WriteCode1Byte(opcode);
 			break;
+		case CALL_CODE:
 		case JNZ_CODE:
 		case JZ_CODE:
 			address = labelTable.Lookup(&operandArray[0][0], &found);

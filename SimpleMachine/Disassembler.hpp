@@ -68,6 +68,7 @@ public:
 				case HLT_CODE:
 					hltFound = true;
 					break;
+				case CALL_CODE:
 				case JZ_CODE:
 				case JNZ_CODE:
 					unsigned char jumpAddr = machine->GetByteAt(address + 1, &validAccess);
@@ -143,6 +144,10 @@ public:
 					//std::cout << "HLT\n";
 					printer.AddConstCString("HLT\n");
 					break;
+				case RET_CODE:
+					printer.AddConstCString("RET\n");
+					break;
+				case CALL_CODE:
 				case JNZ_CODE:
 				case JZ_CODE:
 					operand = machine->GetByteAt(address + 1, &validAccess);

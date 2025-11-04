@@ -12,9 +12,11 @@ private:
 	unsigned char byteCode[MAXMEMBYTES];
 	unsigned char currentMarker;
 	unsigned char loadingOffset;
+	unsigned char mainOffset;
 public:
 	Program()
 	{
+		mainOffset = 0;
 		loadingOffset = 0;
 		currentMarker = 0;
 		for (int i = 0; i < MAXMEMBYTES; i++) {
@@ -107,6 +109,18 @@ public:
 
 	inline unsigned char GetLoadingOffset() {
 		return loadingOffset;
+	}
+
+	inline void SetMainOffset(unsigned char offset) {
+		mainOffset = offset;
+	}
+	
+	inline void SetCurrentMarkerAsMainOffset() {
+		mainOffset = currentMarker;
+	}
+
+	inline unsigned char GetMainOffset() {
+		return mainOffset;
 	}
 };
 

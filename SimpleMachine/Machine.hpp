@@ -111,7 +111,7 @@ struct Machine{
 		unsigned char* code = program->GetByteCodePointer();
 		unsigned char codeLength = program->GetCurrentMarker();
 		memcpy(memory + startingAddress, code, codeLength);
-		pc = startingAddress;
+		pc = startingAddress + program->GetMainOffset();
 		program->SetLoadingOffset(startingAddress);
 	}
 
@@ -443,6 +443,36 @@ struct Machine{
 					goto errexit;
 				}
 				break;
+			case CALL_CODE:
+				if (op1 + loadingOffset < MAXMEMBYTES) {
+					if (sp - 1 >= 0) {
+						--sp;
+						stack[sp] = pc + instrLen;
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = STACK_OVERFLOW;
+						goto errexit;
+					}
+				}
+				else {
+					failureType = BAD_ACCESS;
+					goto errexit;
+				}
+				break;
+			case RET_CODE:
+				if (sp + 1 <= STACKCAPACITY - 1) {
+					temp = stack[sp];
+					++sp;
+					pc = temp;
+					pcIncremented = true;
+				}
+				else {
+					failureType = STACK_UNDERFLOW;
+					goto errexit;
+				}
+				break;
 			case DISP_CODE:
 				if (isOp1WithinRegLimits) {
 					textPrinter.AddInt((int)regs[op1]);
@@ -469,6 +499,12 @@ struct Machine{
 		} while (true);
 	errexit:
 		switch (failureType) {
+		case STACK_OVERFLOW:
+			textPrinter.AddConstCString("stack overflow!\n");
+			break;
+		case STACK_UNDERFLOW:
+			textPrinter.AddConstCString("stack underflow!\n");
+			break;
 		case BAD_ACCESS:
 			textPrinter.AddConstCString("Invalid memory address calculated: Aborting interpretation!\n");
 			break;
