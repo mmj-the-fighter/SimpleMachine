@@ -44,7 +44,8 @@ int main(int argc, char* argv[])
 	char asmFile[256];
 	char ramFile[256];
 	if (argc != 3) {
-		string_copy(asmFile, "program.asm", 256);
+		//string_copy(asmFile, "program.asm", 256);
+		string_copy(asmFile, "subroutine_demo.asm", 256);
 		string_copy(ramFile, "mem.ram", 256);
 	}
 	else {

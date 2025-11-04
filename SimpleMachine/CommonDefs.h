@@ -2,8 +2,9 @@
 #define _COMMONDEFS_
 
 #define MAXMEMBYTES 256
+#define STACKCAPACITY 256
 #define MAXREGS 16
-#define MAXOPCODES 18
+#define MAXOPCODES 20
 #define BUFFERLENGTH 256
 #define MAXOPERANDLENGTH 3
 
@@ -25,7 +26,10 @@ enum {
 	SUB3_CODE = 14,
 	DISP_CODE = 15,
 	ADD1_CODE = 16,
-	SUB1_CODE = 17
+	SUB1_CODE = 17,
+
+	PUSH_CODE = 18,
+	POP_CODE = 19
 };
 
 enum {
@@ -47,6 +51,8 @@ enum {
 	DISP_CODE_LENGTH = 2,
 	ADD1_CODE_LENGTH = 2,
 	SUB1_CODE_LENGTH = 2,
+	PUSH_CODE_LENGTH = 2,
+	POP_CODE_LENGTH = 2
 };
 
 #endif

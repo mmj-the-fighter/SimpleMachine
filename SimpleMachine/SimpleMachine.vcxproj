@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="program.asm" />
+    <None Include="subroutine_demo.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sm.cpp" />

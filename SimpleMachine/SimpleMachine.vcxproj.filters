@@ -62,6 +62,9 @@
     <None Include="program.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="subroutine_demo.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sm.cpp">

@@ -34,6 +34,8 @@ private:
 		inopmap["DISP"] = DISP_CODE;
 		inopmap["ADD1"] = ADD1_CODE;
 		inopmap["SUB1"] = SUB1_CODE;
+		inopmap["PUSH"] = PUSH_CODE;
+		inopmap["POP"] = POP_CODE;
 
 		opinmap[HLT_CODE] = "HLT";
 		opinmap[ADD2_CODE] = "ADD2";
@@ -53,6 +55,8 @@ private:
 		opinmap[DISP_CODE] = "DISP";
 		opinmap[ADD1_CODE] = "ADD1";
 		opinmap[SUB1_CODE] = "SUB1";
+		opinmap[PUSH_CODE] = "PUSH";
+		opinmap[POP_CODE] = "POP";
 
 
 		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
@@ -73,6 +77,8 @@ private:
 		inlengtharray[DISP_CODE] = DISP_CODE_LENGTH;
 		inlengtharray[ADD1_CODE] = ADD1_CODE_LENGTH;
 		inlengtharray[SUB1_CODE] = SUB1_CODE_LENGTH;
+		inlengtharray[PUSH_CODE] = PUSH_CODE_LENGTH;
+		inlengtharray[POP_CODE] = POP_CODE_LENGTH;
 
 	}
 

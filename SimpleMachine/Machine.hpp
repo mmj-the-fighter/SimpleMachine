@@ -13,12 +13,17 @@ enum FailureType {
 	INVALID_OPCODE,
 	INVALID_REG,
 	INVALID_PROGRAM,
+	STACK_OVERFLOW,
+	STACK_UNDERFLOW
 };
+
 
 struct Machine{
 	unsigned char regs[MAXREGS];
 	unsigned char pc;
+	unsigned char sp;
 	unsigned char memory[MAXMEMBYTES];
+	unsigned char stack[STACKCAPACITY];
 	Program* program;
 	bool zeroFlag;
 	TextPrinter textPrinter;
@@ -27,8 +32,12 @@ struct Machine{
 		zeroFlag = false;
 		program = NULL;
 		pc = 0;
+		sp = STACKCAPACITY - 1;
 		for (int i = 0; i < MAXMEMBYTES; i++) {
 			memory[i] = HLT_CODE;
+		}
+		for (int i = 0; i < STACKCAPACITY; i++) {
+			stack[i] = HLT_CODE;
 		}
 		for (int i = 0; i < MAXREGS; i++) {
 			regs[i] = HLT_CODE;
@@ -395,6 +404,38 @@ struct Machine{
 					}
 					else {
 						zeroFlag = false;
+					}
+				}
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
+				break;
+			case PUSH_CODE:
+				if (isOp1WithinRegLimits) {
+					if (sp - 1 >= 0) {
+						--sp;
+					}
+					else {
+						failureType = STACK_OVERFLOW;
+						goto errexit;
+					}
+					stack[sp] = regs[op1];
+				}
+				else {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
+				break;
+			case POP_CODE:
+				if (isOp1WithinRegLimits) {
+					if (sp + 1 <= STACKCAPACITY - 1) {
+						regs[op1] = stack[sp];
+						++sp;
+					}
+					else {
+						failureType = STACK_UNDERFLOW;
+						goto errexit;
 					}
 				}
 				else {
