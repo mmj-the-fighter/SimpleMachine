@@ -26,7 +26,7 @@ It acts as a minimal CPU with a basic assembler, disassembler, and simulator.
 
 ---
 
-## Supported / Planned instructions with usage, action and status
+## Supported instructions with usage, action and status
 
 | Mnemonic | Format |Description | Example | Status |
 |:----------|:-------------|:-------------|:---------|:---------| 
