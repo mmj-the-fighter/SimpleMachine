@@ -30,33 +30,33 @@ It acts as a minimal CPU with a basic assembler, disassembler, and simulator.
 
 | Mnemonic | Format |Description | Example | Status |
 |:----------|:-------------|:-------------|:---------|:---------| 
-| **HLT** | `HLT` | Stop execution | `HLT` |[/]|
-| **ADD1** | `ADD1 reg` | [A] = [A] + reg  | `ADD1 B` |[/]|
-| **SUB1** | `SUB1 reg` | [A] = [A] - reg  | `SUB1 B`|[/]|
-| **ADD2** | `ADD2 reg1 reg2` | [A] = reg1  + reg2  | `ADD2 C D` |[/]|
-| **SUB2** | `SUB2 reg1 reg2` | [A] =  reg1  - reg2  | `SUB2 C D` |[/]|
-| **ADD3** | `ADD3 reg1 reg2 reg3` | reg1 =  reg2  + reg3  | `ADD3 C D E` |[/]|
-| **SUB3** | `SUB3 reg1 reg2 reg3` | reg1 =  reg2  - reg3  | `SUB3 C D E` |[/]|
-| **JZ** | `JZ label` | set pc = label_address if zero flag **is** set | `JZ LOOP` |[/]|
-| **JNZ** | `JNZ label` | set pc = label_address if zero flag **not** set | `JNZ LOOP` |[/]|
-| **CMP** | `CMP reg1 reg2` | temp = reg1 - reg2; affect_condition_codes(temp)  | `CMP A B` |[X]|
-| **JEQ** | `JEQ oper` | set pc = label_address if condition code is  **is** `==` | `JEQ LOOP` |[X]|
-| **JNEQ** | `JNEQ oper` | set pc = label_address if condition code **is not** `==` | `JNEQ LOOP` |[X]|
-| **JLT** | `JLT oper` | set pc = label_address if condition code **is** `<` | `JLT LOOP` |[X]|
-| **JGT** | `JGT oper` | set pc = label_address if condition code **is** `>` | `JGT LOOP` |[X]|
-| **MOV** | `MOV reg1 reg2`| reg1 = reg2 | `MOV A B` |[/]|
-| **LOAD** | `LOAD reg address` | reg = memory[address] | `LOAD A 100` |[/]|
-| **LDR** | `LDR reg1 reg2` | reg1 = memory[reg2] | `LDR A B` |[/]|
-| **STORE** | `STORE reg address` | memory[address]  = reg | `STORE A 100` |[/]|
-| **STR** | `STR reg1 reg2` | memory[reg2]  = reg1 | `LDR A B` |[/]|
-| **INC** | `INC reg` | reg = reg + 1 | `INC B` |[/]|
-| **DCR** | `DCR reg` | reg = reg - 1 | `DCR B` |[/]|
-| **MVI** | `MVI reg value` | reg = value | `MVI A 20` |[/]|
-| **DISP** | `DISP reg` | Print the reg | `DISP A` |[/]|
-| **PUSH** | `PUSH reg` | Push reg on stack | `PUSH A` |[X]|
-| **POP** | `POP reg` | POP top of the stack to reg | `POP A` |[X]|
-| **CALL** | `CALL label` | jump to subroutine indicated by label_address | `CALL FACTORIAL` |[X]|
-| **RET** | `RET` | return from subroutine | `RET` |[X]|
+| **HLT** | `HLT` | Stop execution | `HLT` |[Done]
+| **ADD1** | `ADD1 reg` | [A] = [A] + reg  | `ADD1 B` |[Done]
+| **SUB1** | `SUB1 reg` | [A] = [A] - reg  | `SUB1 B`|[Done]
+| **ADD2** | `ADD2 reg1 reg2` | [A] = reg1  + reg2  | `ADD2 C D` |[Done]
+| **SUB2** | `SUB2 reg1 reg2` | [A] =  reg1  - reg2  | `SUB2 C D` |[Done]
+| **ADD3** | `ADD3 reg1 reg2 reg3` | reg1 =  reg2  + reg3  | `ADD3 C D E` |[Done]
+| **SUB3** | `SUB3 reg1 reg2 reg3` | reg1 =  reg2  - reg3  | `SUB3 C D E` |[Done]
+| **JZ** | `JZ label` | set pc = label_address if zero flag **is** set | `JZ LOOP` |[Done]
+| **JNZ** | `JNZ label` | set pc = label_address if zero flag **not** set | `JNZ LOOP` |[Done]
+| **CMP** | `CMP reg1 reg2` | temp = reg1 - reg2; affect_condition_codes(temp)  | `CMP A B` |[Done]
+| **JEQ** | `JEQ oper` | set pc = label_address if condition code is  **is** `==` | `JEQ LOOP` |[Done]
+| **JNEQ** | `JNEQ oper` | set pc = label_address if condition code **is not** `==` | `JNEQ LOOP` |[Done]
+| **JLT** | `JLT oper` | set pc = label_address if condition code **is** `<` | `JLT LOOP` |[Done]
+| **JGT** | `JGT oper` | set pc = label_address if condition code **is** `>` | `JGT LOOP` |[Done]
+| **MOV** | `MOV reg1 reg2`| reg1 = reg2 | `MOV A B` |[Done]
+| **LOAD** | `LOAD reg address` | reg = memory[address] | `LOAD A 100` |[Done]
+| **LDR** | `LDR reg1 reg2` | reg1 = memory[reg2] | `LDR A B` |[Done]
+| **STORE** | `STORE reg address` | memory[address]  = reg | `STORE A 100` |[Done]
+| **STR** | `STR reg1 reg2` | memory[reg2]  = reg1 | `LDR A B` |[Done]
+| **INC** | `INC reg` | reg = reg + 1 | `INC B` |[Done]
+| **DCR** | `DCR reg` | reg = reg - 1 | `DCR B` |[Done]
+| **MVI** | `MVI reg value` | reg = value | `MVI A 20` |[Done]
+| **DISP** | `DISP reg` | Print the reg | `DISP A` |[Done]
+| **PUSH** | `PUSH reg` | Push reg on stack | `PUSH A` |[Done]
+| **POP** | `POP reg` | POP top of the stack to reg | `POP A` |[Done]
+| **CALL** | `CALL label` | jump to subroutine indicated by label_address | `CALL FACTORIAL` |[Done]
+| **RET** | `RET` | return from subroutine | `RET` |[Done]
 
 ---
 
