@@ -62,7 +62,10 @@
     <None Include="program.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="subroutine_demo.asm">
+    <None Include="subroutine_test.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="cmp_test.asm">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

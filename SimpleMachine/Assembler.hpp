@@ -270,6 +270,10 @@ private:
 		case CALL_CODE:
 		case JNZ_CODE:
 		case JZ_CODE:
+		case JLT_CODE:
+		case JEQ_CODE:
+		case JGT_CODE:
+		case JNEQ_CODE:
 			address = labelTable.Lookup(&operandArray[0][0], &found);
 			if (!found) {
 				std::cout << "Label not found ";
@@ -299,6 +303,7 @@ private:
 		case MOV_CODE:
 		case LDR_CODE:
 		case STR_CODE:
+		case CMP_CODE:
 			if (oper1oper2Len != 2) {
 				std::cout << "Invalid Register ";
 				return false;

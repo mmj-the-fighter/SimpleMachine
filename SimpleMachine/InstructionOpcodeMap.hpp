@@ -38,6 +38,12 @@ private:
 		inopmap["POP"] = POP_CODE;
 		inopmap["CALL"] = CALL_CODE;
 		inopmap["RET"] = RET_CODE;
+		inopmap["CMP"] = CMP_CODE;
+		inopmap["JLT"] = JLT_CODE;
+		inopmap["JEQ"] = JEQ_CODE;
+		inopmap["JGT"] = JGT_CODE;
+		inopmap["JNEQ"] = JNEQ_CODE;
+
 
 		opinmap[HLT_CODE] = "HLT";
 		opinmap[ADD2_CODE] = "ADD2";
@@ -61,6 +67,11 @@ private:
 		opinmap[POP_CODE] = "POP";
 		opinmap[CALL_CODE] = "CALL";
 		opinmap[RET_CODE] = "RET";
+		opinmap[CMP_CODE] = "CMP";
+		opinmap[JLT_CODE] = "JLT";
+		opinmap[JEQ_CODE] = "JEQ";
+		opinmap[JGT_CODE] = "JGT";
+		opinmap[JNEQ_CODE] = "JNEQ";
 
 
 		inlengtharray[HLT_CODE] = HLT_CODE_LENGTH;
@@ -85,6 +96,11 @@ private:
 		inlengtharray[POP_CODE] = POP_CODE_LENGTH;
 		inlengtharray[CALL_CODE] = CALL_CODE_LENGTH;
 		inlengtharray[RET_CODE] = RET_CODE_LENGTH;
+		inlengtharray[CMP_CODE] = CMP_CODE_LENGTH;
+		inlengtharray[JLT_CODE] = JLT_CODE_LENGTH;
+		inlengtharray[JEQ_CODE] = JEQ_CODE_LENGTH;
+		inlengtharray[JGT_CODE] = JGT_CODE_LENGTH;
+		inlengtharray[JNEQ_CODE] = JNEQ_CODE_LENGTH;
 
 	}
 

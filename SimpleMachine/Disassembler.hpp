@@ -71,6 +71,10 @@ public:
 				case CALL_CODE:
 				case JZ_CODE:
 				case JNZ_CODE:
+				case JLT_CODE:
+				case JEQ_CODE:
+				case JGT_CODE:
+				case JNEQ_CODE:
 					unsigned char jumpAddr = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						std::cout << "bad exe format\n";
@@ -150,6 +154,10 @@ public:
 				case CALL_CODE:
 				case JNZ_CODE:
 				case JZ_CODE:
+				case JLT_CODE:
+				case JEQ_CODE:
+				case JGT_CODE:
+				case JNEQ_CODE:
 					operand = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {
 						badAccess = true;
@@ -203,6 +211,7 @@ public:
 				case MOV_CODE:
 				case LDR_CODE:
 				case STR_CODE:
+				case CMP_CODE:
 					validAccess = machine->GetAtMost4Bytes(address + 1, 2, &operands[0]);
 					//operand1 = machine->GetByteAt(address + 1, &validAccess);
 					if (!validAccess) {

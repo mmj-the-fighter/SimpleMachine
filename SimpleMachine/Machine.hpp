@@ -24,11 +24,13 @@ struct Machine{
 	unsigned char sp;
 	unsigned char memory[MAXMEMBYTES];
 	unsigned char stack[STACKCAPACITY];
+	unsigned char conditionCode;
 	Program* program;
 	bool zeroFlag;
 	TextPrinter textPrinter;
 
 	Machine(){
+		conditionCode = CC_MISC;
 		zeroFlag = false;
 		program = NULL;
 		pc = 0;
@@ -283,6 +285,57 @@ struct Machine{
 					}
 				}
 				break;
+			case JLT_CODE :
+				if (conditionCode == CC_LE) {
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
+				}
+				break;
+
+			case JEQ_CODE:
+				if (conditionCode == CC_EQ) {
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
+				}
+				break;
+
+			case JGT_CODE:
+				if (conditionCode == CC_GT) {
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
+				}
+				break;
+
+			case JNEQ_CODE:
+				if (conditionCode != CC_EQ) {
+					if (pc + op1 + loadingOffset < MAXMEMBYTES) {
+						pc = op1 + loadingOffset;
+						pcIncremented = true;
+					}
+					else {
+						failureType = BAD_ACCESS;
+						goto errexit;
+					}
+				}
+				break;
 			case MOV_CODE:
 				if (isOp1WithinRegLimits && isOp2WithinRegLimits) {
 					regs[op1] = regs[op2];
@@ -481,6 +534,21 @@ struct Machine{
 				else {
 					failureType = INVALID_REG;
 					goto errexit;
+				}
+				break;
+			case CMP_CODE:
+				if (!isOp1WithinRegLimits || !isOp2WithinRegLimits) {
+					failureType = INVALID_REG;
+					goto errexit;
+				}
+				if (regs[op1] < regs[op2]) {
+					conditionCode = CC_LE;
+				}
+				else if (regs[op1] > regs[op2]) {
+					conditionCode = CC_GT;
+				}
+				else {
+					conditionCode = CC_EQ;
 				}
 				break;
 			default:

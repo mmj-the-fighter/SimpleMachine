@@ -143,8 +143,9 @@
     <ClInclude Include="TextPrinter.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cmp_test.asm" />
     <None Include="program.asm" />
-    <None Include="subroutine_demo.asm" />
+    <None Include="subroutine_test.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sm.cpp" />
