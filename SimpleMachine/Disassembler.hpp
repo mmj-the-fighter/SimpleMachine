@@ -15,19 +15,22 @@ class Disassembler
 {
 	Machine* machine;
 	unsigned char loadingOffset;
+	unsigned char programLength;
 	RevSymbolTable addressLabelTable;
 	TextPrinter printer;
 	RegisterHelper regHelper;
 	std::ostringstream ss;
 public:
-	Disassembler(Machine* m, unsigned char offset) {
+	Disassembler(Machine* m, unsigned char offset, unsigned char length) {
 		machine = m;
 		loadingOffset = offset;
+		programLength = length;
 	}
 
 	Disassembler() {
 		machine = NULL;
 		loadingOffset = 0;
+		programLength = 0;
 	}
 
 	std::string GenLabel(int count) {
@@ -38,22 +41,23 @@ public:
 	}
 
 
-	void Set(Machine* m, unsigned char offset) {
+	void Set(Machine* m, unsigned char offset, unsigned char length) {
 		machine = m;
 		loadingOffset = offset;
+		programLength = length;
 	}
 
 	bool PassForSymbols() {
 		//util::ProfilerScope prof(311);
 		unsigned char address = loadingOffset;
+		unsigned char lastLoc = address + programLength - 1;
 		int labelCount = 0;
 
-		bool hltFound = false;
 		bool instrFound;
 		bool validAccess;
 		unsigned char instrLength;
 
-		while (!hltFound) {
+		while (address <= lastLoc) {
 			unsigned char opcode = machine->GetByteAt(address, &validAccess);
 			if (!validAccess) {
 				std::cout << "Unexpected access error\n";
@@ -65,9 +69,6 @@ public:
 			if (instrFound) {
 				//std::cout << *pInstr << std::endl;
 				switch (opcode) {
-				case HLT_CODE:
-					hltFound = true;
-					break;
 				case CALL_CODE:
 				case JZ_CODE:
 				case JNZ_CODE:
@@ -96,13 +97,13 @@ public:
 
 	bool Translate() {
 		unsigned char address = loadingOffset;
-		bool hltFound = false;
 		bool validAccess;
 		bool foundInstr;
 		bool foundLabel;
 		bool badExeFormat = false;
 		bool badAccess = false;
 		int badLocation = 0;
+		unsigned char lastLoc = address + programLength - 1;
 
 		//machine->memory[12] = 67;
 
@@ -111,7 +112,7 @@ public:
 		}
 
 		printer.AddConstCString("Disassembly:\n");
-		while (!hltFound) {
+		while (address <= lastLoc) {
 			std::string instr;
 			char reg;
 			unsigned char operand;
@@ -146,10 +147,10 @@ public:
 				switch (opcode) {
 				case HLT_CODE:
 					//std::cout << "HLT\n";
-					printer.AddConstCString("HLT\n");
+					printer.AddConstCString("HLT\n\n");
 					break;
 				case RET_CODE:
-					printer.AddConstCString("RET\n");
+					printer.AddConstCString("RET\n\n");
 					break;
 				case CALL_CODE:
 				case JNZ_CODE:
@@ -305,9 +306,6 @@ public:
 				badExeFormat = true;
 				badLocation = address;
 				goto exit;
-			}
-			if (opcode == HLT_CODE) {
-				hltFound = true;
 			}
 		}
 	exit:

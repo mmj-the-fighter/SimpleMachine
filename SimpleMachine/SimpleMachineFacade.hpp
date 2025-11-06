@@ -19,11 +19,13 @@ class SimpleMachineFacade
 	Assembler assembler;
 	Disassembler disassembler;
 	unsigned char loadingOffset;
+	unsigned char programLength;
 
 public:
 	SimpleMachineFacade(){
 		assembler.Set(&textFileLoader, &program);
 		loadingOffset = 0;
+		programLength = 0;
 	}
 
 	bool TranslateAssembly(const char* asmFileName) {
@@ -40,6 +42,7 @@ public:
 			std::cout << "Translation failed\n";
 			return false;
 		}
+		programLength = program.GetCurrentMarker();
 		return true;
 	}
 	bool InterpretProgram() {
@@ -51,7 +54,7 @@ public:
 
 	bool Disassemble() {
 		util::ProfilerScope prof(3000);
-		disassembler.Set(&machine, loadingOffset);
+		disassembler.Set(&machine, loadingOffset, programLength);
 		return disassembler.Translate();
 	}
 
