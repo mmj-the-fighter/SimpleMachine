@@ -238,6 +238,10 @@ private:
 				c = '\0';
 			}
 			k = 0;
+			while (i < BUFFERLENGTH && c != '\0' && isspace(c)) {
+				++i;
+				c = buffer[i];
+			}
 			while (i < BUFFERLENGTH && k < BUFFERLENGTH - 1 && c != '\0' && !isspace(c)) {
 				operandBuffer[k] = c;
 				++k;
