@@ -79,5 +79,34 @@ DISP C
 HLT
 ```
 
+## Assembler
+The assembler analyzes the assembly source code and emits bytecode into a program object.  
+The program object represents a continuous memory region containing both code and metadata.  
+
+The assembler operates in two passes:  
+
+- **First Pass:** Labels and their corresponding addresses are recorded in a label table. Each opcode is recognized, and a marker is advanced according to the instruction length. When a label is encountered, it is stored in the table with the current marker value.  
+- **Second Pass:** The marker is reset to zero. Each line is reprocessed, and opcodes and operands are resolved. The opcodes are written. If an operand is a label, its address is retrieved from the label table and written to the program object. For register operands, a helper object maps register names to numeric codes. After resolving the operands, they are also written and the marker is incremented. 
+
+Throughout both passes, the assembler performs necessary error checks.  
+A special assembler directive, `MAIN`, indicates the program's entry point. This directive is handled during the first pass, updating the program object's `mainOffset` field. 
+
+## Simulator (Interpreter)
+The loader transfers the program object into memory, after which the interpreter begins execution from `mainOffset`. It reads opcodes and operands sequentially and performs the specified operations, advancing the instruction pointer accordingly. 
+
+For example, the `MOV` operation corresponds to: 
+
+registersArray[operand1] = registersArray[operand2]; 
+
+All instructions are implemented within a large `switch-case` construct. Execution continues until the `HLT` instruction is encountered. The `CALL` and `RET` instructions manipulate the stack, which is maintained in a separate memory area.
+
+## Disassembler
+
+The disassembler also operates in two passes.  
+In the first pass, all jump instructions are analyzed, and their target addresses are stored in a table with pseudo-labels.  
+During the second pass, these pseudo-labels are used when generating readable output.  
+The disassembler emits mnemonics for each opcode and resolves register and memory references appropriately.  
+It requires knowledge of both the program length and the starting memory address where the program is loaded.
+
 ### Note
 This README has been written with the help of AI for formatting and some descriptions.
