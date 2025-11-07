@@ -85,11 +85,11 @@ The program object represents a continuous memory region containing both code an
 
 The assembler operates in two passes:  
 
-- **First Pass:** Labels and their corresponding addresses are recorded in a label table. Each opcode is recognized, and a marker is advanced according to the instruction length. When a label is encountered, it is stored in the table with the current marker value.  
-- **Second Pass:** The marker is reset to zero. Each line is reprocessed, and opcodes and operands are resolved. The opcodes are written. If an operand is a label, its address is retrieved from the label table and written to the program object. For register operands, a helper object maps register names to numeric codes. After resolving the operands, they are also written and the marker is incremented. 
+- **First Pass:** The marker is set to zero. Labels and their corresponding addresses are recorded in a label table. Each opcode is recognized, and a marker is advanced according to the instruction length. When a label is encountered, it is stored in the table with the current marker value.  
+- **Second Pass:** The marker is reset to zero. Each line is reprocessed, and opcodes and operands are resolved. The opcodes are written. If an operand is a label, its address is retrieved from the label table and written to the program object. For register operands, a register character to number mapper helps to get the right number for the register and that code is also written. Thus whether the string is Opcode, memory address, label or register it's corresponding number is found and written on the program object.
 
 Throughout both passes, the assembler performs necessary error checks.  
-A special assembler directive, `MAIN`, indicates the program's entry point. This directive is handled during the first pass, updating the program object's `mainOffset` field. 
+A special label, `MAIN`, is reserved for indicating the program's entry point. This directive is handled during the first pass, updating the program object's `mainOffset` field. 
 
 ## Simulator (Interpreter)
 The loader transfers the program object into memory, after which the interpreter begins execution from `mainOffset`. It reads opcodes and operands sequentially and performs the specified operations, advancing the instruction pointer accordingly. 
@@ -98,7 +98,7 @@ For example, the `MOV` operation corresponds to:
 
 registersArray[operand1] = registersArray[operand2]; 
 
-All instructions are implemented within a large `switch-case` construct. Execution continues until the `HLT` instruction is encountered. The `CALL` and `RET` instructions manipulate the stack, which is maintained in a separate memory area.
+All instructions are implemented within a large `switch-case` construct. Execution continues until the `HLT` instruction is encountered. The `CALL` and `RET` instructions manipulate the stack, which is maintained in a separate memory area. The `CALL` instruction pushes the return address to the stack and jumps to the location. The `RET` instruction pops the return address and jumps to that location. By carefully using stack the program can pass arguments to the callee and get return values from it. That can be done through memory or registers too.  
 
 ## Disassembler
 
