@@ -8,7 +8,7 @@
 
 char convertToUpperCase(char c) {
 	if (c >= 'a' && c <= 'z') {
-		return (char)c + 26;
+		return c - 32;
 	}
 	else {
 		return c;
