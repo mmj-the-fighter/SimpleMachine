@@ -18,8 +18,8 @@ class SimpleMachineFacade
 	Program program;
 	Assembler assembler;
 	Disassembler disassembler;
-	unsigned char loadingOffset;
-	unsigned char programLength;
+	int loadingOffset;
+	int programLength;
 
 public:
 	SimpleMachineFacade(){
@@ -72,7 +72,7 @@ public:
 			std::cout << ramFile << ": File Not Found";
 			return false;
 		}
-		int i = 0;
+		size_t i = 0;
 		int lineNumber = 0;
 		int loc;
 		int value;

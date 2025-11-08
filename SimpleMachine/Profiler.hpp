@@ -19,11 +19,11 @@ namespace util {
 	using CallStack = std::vector<long>;
 
 	struct CodeProfile {
-		long tag;
-		TimeUnit unit;
-		long serial;
-		double deltaTime;
-		TimePoint startTime;
+		TimePoint  startTime;
+		double     deltaTime;
+		long       tag;
+		long       serial;
+		TimeUnit   unit;
 
 		CodeProfile(
 			long aTag,
@@ -141,11 +141,12 @@ namespace util {
 			}
 		}
 	private:
-		ProfilerDb db;
-		CallStack stk;
-		TimeUnit preferredUnit;
-		long serialNumber;
-		long snippetTag;
+		ProfilerDb db;       
+		CallStack  stk;      
+		long       serialNumber;
+		long       snippetTag;
+		TimeUnit   preferredUnit;
+
 		Profiler() :
 			preferredUnit(TimeUnit::Milliseconds),
 			serialNumber(0),

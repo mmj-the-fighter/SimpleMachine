@@ -20,11 +20,14 @@ public:
 		bufferLength = 0;
 	}
 
-	char GetTextAt(unsigned int i) {
-		if (i >= bufferLength) {
+	char GetTextAt(size_t i) {
+		if (i < bufferLength) {
+			return buffer[i];
+		}
+		else {
 			return '\0';
 		}
-		return buffer[i];
+		
 	}
 
 	RamFileLoader(const char* filename)
@@ -70,9 +73,9 @@ public:
 		return true;
 	}
 
-	bool GetNonEmptyLine(char* buf, int bufLen, int* ssm, int* lineNumber) {
-		unsigned int i = *ssm;
-		int k;
+	bool GetNonEmptyLine(char* buf, size_t bufLen, size_t* ssm, int* lineNumber) {
+		size_t i = *ssm;
+		size_t k;
 		char c;
 		int validCharCount;
 		do

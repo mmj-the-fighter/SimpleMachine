@@ -14,14 +14,14 @@
 class Disassembler
 {
 	Machine* machine;
-	unsigned char loadingOffset;
-	unsigned char programLength;
+	int loadingOffset;
+	int programLength;
 	RevSymbolTable addressLabelTable;
 	TextPrinter printer;
 	RegisterHelper regHelper;
 	std::ostringstream ss;
 public:
-	Disassembler(Machine* m, unsigned char offset, unsigned char length) {
+	Disassembler(Machine* m, int offset, int length) {
 		machine = m;
 		loadingOffset = offset;
 		programLength = length;
@@ -41,7 +41,7 @@ public:
 	}
 
 
-	void Set(Machine* m, unsigned char offset, unsigned char length) {
+	void Set(Machine* m, int offset, int length) {
 		machine = m;
 		loadingOffset = offset;
 		programLength = length;
@@ -49,8 +49,8 @@ public:
 
 	bool PassForSymbols() {
 		//util::ProfilerScope prof(311);
-		unsigned char address = loadingOffset;
-		unsigned char lastLoc = address + programLength - 1;
+		int address = loadingOffset;
+		int lastLoc = address + programLength - 1;
 		int labelCount = 0;
 
 		bool instrFound;
@@ -58,12 +58,7 @@ public:
 		unsigned char instrLength;
 
 		while (address <= lastLoc) {
-			unsigned char opcode = machine->GetByteAt(address, &validAccess);
-			if (!validAccess) {
-				std::cout << "Unexpected access error\n";
-				return false;
-			}
-			
+			unsigned char opcode = machine->GetByteAtFast(address);
 			InstructionOpcodeMap::GetInstance()
 				.GetOpcodeStrAndInstrLength(opcode, &instrLength, &instrFound);
 			if (instrFound) {
@@ -96,14 +91,14 @@ public:
 	}
 
 	bool Translate() {
-		unsigned char address = loadingOffset;
+		int address = loadingOffset;
 		bool validAccess;
 		bool foundInstr;
 		bool foundLabel;
 		bool badExeFormat = false;
 		bool badAccess = false;
 		int badLocation = 0;
-		unsigned char lastLoc = address + programLength - 1;
+		int lastLoc = address + programLength - 1;
 
 		//machine->memory[12] = 67;
 

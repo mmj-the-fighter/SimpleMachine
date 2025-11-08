@@ -29,34 +29,34 @@ class RegisterHelper
 {
 public:
 	inline unsigned char FindRegisterNumber(char r) {
-		unsigned char offset = r - 'A';
+		int offset = r - 'A';
 		if (offset < 0 || offset>15) {
 			return 0xFF;
 		}
-		return offset;
+		return static_cast<unsigned char>(offset);
 	}
 
 	inline bool FindRegisterNumberPair(char buf[][BUFFERLENGTH], RegisterNumPair* regNumPair) {
-		unsigned char offset1 = buf[0][0] - 'A';
-		unsigned char offset2 = buf[1][0] - 'A';
+		int offset1 = buf[0][0] - 'A';
+		int offset2 = buf[1][0] - 'A';
 		if (offset1 < 0 || offset1 >15 || offset2 < 0 || offset2 >15) {
 			return false;
 		}
-		regNumPair->r1 = offset1;
-		regNumPair->r2 = offset2;
+		regNumPair->r1 = static_cast<unsigned char>(offset1);
+		regNumPair->r2 = static_cast<unsigned char>(offset2);
 		return true;
 	}
 
 	inline bool FindRegisterNumberTriplet(char buf[][BUFFERLENGTH], RegisterNumTriplet* regNumTriplet) {
-		unsigned char offset1 = buf[0][0] - 'A';
-		unsigned char offset2 = buf[1][0] - 'A';
-		unsigned char offset3 = buf[2][0] - 'A';
+		int offset1 = buf[0][0] - 'A';
+		int offset2 = buf[1][0] - 'A';
+		int offset3 = buf[2][0] - 'A';
 		if (offset1 < 0 || offset1 >15 || offset2 < 0 || offset2 >15 || offset3 < 0 || offset3 >15) {
 			return false;
 		}
-		regNumTriplet->r1 = offset1;
-		regNumTriplet->r2 = offset2;
-		regNumTriplet->r3 = offset3;
+		regNumTriplet->r1 = static_cast<unsigned char>(offset1);
+		regNumTriplet->r2 = static_cast<unsigned char>(offset2);
+		regNumTriplet->r3 = static_cast<unsigned char>(offset3);
 		return true;
 	}
 

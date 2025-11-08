@@ -20,8 +20,8 @@ enum FailureType {
 
 struct Machine{
 	unsigned char regs[MAXREGS];
-	unsigned char pc;
-	unsigned char sp;
+	int pc;
+	int sp;
 	unsigned char memory[MAXMEMBYTES];
 	unsigned char stack[STACKCAPACITY];
 	unsigned char conditionCode;
@@ -53,6 +53,10 @@ struct Machine{
 		else {
 			return true;
 		}
+	}
+
+	inline unsigned char GetByteAtFast(int address) {
+			return memory[address];
 	}
 
 	unsigned char GetByteAt(int address, bool* validAccess) {
@@ -108,18 +112,18 @@ struct Machine{
 		return true;
 	}
 
-	void LoadProgram(unsigned char startingAddress, Program* aProgram){
+	void LoadProgram(int startingAddress, Program* aProgram){
 		program = aProgram;
 		unsigned char* code = program->GetByteCodePointer();
-		unsigned char codeLength = program->GetCurrentMarker();
-		memcpy(memory + startingAddress, code, codeLength);
+		int codeLength = program->GetCurrentMarker();
+		memcpy(memory + startingAddress, code, static_cast<size_t>(codeLength));
 		pc = startingAddress + program->GetMainOffset();
 		program->SetLoadingOffset(startingAddress);
 	}
 
 	bool InterpretProgram() {
-		unsigned char loadingOffset = program->GetLoadingOffset();
-		unsigned char opcode;
+		int loadingOffset = program->GetLoadingOffset();
+		unsigned char opcode = 255;
 		bool pcIncremented = false;
 		bool isOp1WithinRegLimits = true;
 		bool isOp2WithinRegLimits = true;
@@ -194,7 +198,7 @@ struct Machine{
 				}
 				break;
 			}
-			unsigned char acc = regs[0];
+			int acc = regs[0];
 			pcIncremented = false;
 			switch (opcode){
 			case ADD1_CODE:
@@ -206,7 +210,7 @@ struct Machine{
 					else {
 						zeroFlag = false;
 					}
-					regs[0] = acc;
+					regs[0] = static_cast<unsigned char>(acc);
 				}
 				else {
 					failureType = INVALID_REG;
@@ -222,7 +226,7 @@ struct Machine{
 					else {
 						zeroFlag = false;
 					}
-					regs[0] = acc;
+					regs[0] = static_cast<unsigned char>(acc);
 				}
 				else {
 					failureType = INVALID_REG;
@@ -238,7 +242,7 @@ struct Machine{
 					else {
 						zeroFlag = false;
 					}
-					regs[0] = acc;
+					regs[0] = static_cast<unsigned char>(acc);
 				}
 				else {
 					failureType = INVALID_REG;
@@ -254,7 +258,7 @@ struct Machine{
 					else {
 						zeroFlag = false;
 					}
-					regs[0] = acc;
+					regs[0] = static_cast<unsigned char>(acc);
 				}
 				else {
 					failureType = INVALID_REG;
@@ -346,11 +350,7 @@ struct Machine{
 				}
 				break;
 			case LOAD_CODE:
-				if (op2 >= MAXMEMBYTES) {
-					failureType = BAD_ACCESS;
-					goto errexit;
-				}
-				else if (!isOp1WithinRegLimits) {
+				if (!isOp1WithinRegLimits) {
 					failureType = INVALID_REG;
 					goto errexit;
 				}
@@ -362,20 +362,10 @@ struct Machine{
 					goto errexit;
 				}
 				temp = regs[op2];
-				if (temp < MAXMEMBYTES) {
-					regs[op1] = memory[temp];
-				}
-				else {
-					failureType = BAD_ACCESS;
-					goto errexit;
-				}
+				regs[op1] = memory[temp];
 				break;
 			case STORE_CODE:
-				if (op2 > MAXMEMBYTES) {
-					failureType = BAD_ACCESS;
-					goto errexit;
-				}
-				else if (!isOp1WithinRegLimits) {
+				if (!isOp1WithinRegLimits) {
 					failureType = INVALID_REG;
 					goto errexit;
 				}
@@ -387,13 +377,7 @@ struct Machine{
 					goto errexit;
 				}
 				temp = regs[op2];
-				if (temp < MAXMEMBYTES) {
-					memory[temp] = regs[op1];
-				}
-				else {
-					failureType = BAD_ACCESS;
-					goto errexit;
-				}
+				memory[temp] = regs[op1];
 				break;
 			case INC_CODE:
 				if (isOp1WithinRegLimits) {
@@ -436,7 +420,7 @@ struct Machine{
 				break;
 			case ADD3_CODE:
 				if (isOp1WithinRegLimits && isOp2WithinRegLimits && isOp3WithinRegLimits) {
-					regs[op1] = regs[op2] + regs[op3];
+					regs[op1] = static_cast<unsigned char>(regs[op2] + regs[op3]);
 					if (regs[op1] == 0) {
 						zeroFlag = true;
 					}
@@ -451,7 +435,7 @@ struct Machine{
 				break;
 			case SUB3_CODE:
 				if (isOp1WithinRegLimits && isOp2WithinRegLimits && isOp3WithinRegLimits) {
-					regs[op1] = regs[op2] - regs[op3];
+					regs[op1] = static_cast<unsigned char>(regs[op2] - regs[op3]);
 					if (regs[op1] == 0) {
 						zeroFlag = true;
 					}
@@ -500,7 +484,7 @@ struct Machine{
 				if (op1 + loadingOffset < MAXMEMBYTES) {
 					if (sp - 1 >= 0) {
 						--sp;
-						stack[sp] = pc + instrLen;
+						stack[sp] = static_cast<unsigned char>(pc + instrLen);
 						pc = op1 + loadingOffset;
 						pcIncremented = true;
 					}

@@ -10,9 +10,9 @@ class Program
 {
 private:
 	unsigned char byteCode[MAXMEMBYTES];
-	unsigned char currentMarker;
-	unsigned char loadingOffset;
-	unsigned char mainOffset;
+	int currentMarker;
+	int loadingOffset;
+	int mainOffset;
 public:
 	Program()
 	{
@@ -28,8 +28,8 @@ public:
 		currentMarker = 0;
 	}
 
-	inline bool AdvanceMarker(unsigned char instrLength){
-		if (currentMarker+ instrLength > MAXMEMBYTES - 1){
+	inline bool AdvanceMarker(int instrLength){
+		if (currentMarker + instrLength > MAXMEMBYTES - 1){
 			return false;
 		}
 		currentMarker = currentMarker + instrLength;
@@ -37,7 +37,7 @@ public:
 	}
 
 	inline void WriteCode1Byte(unsigned char byte1){
-		if (currentMarker >= MAXMEMBYTES - 1){
+		if (currentMarker + 1 > MAXMEMBYTES - 1){
 			return;
 		}
 		byteCode[currentMarker] = byte1;
@@ -45,7 +45,7 @@ public:
 	}
 
 	inline void WriteCode2Bytes(unsigned char byte1, unsigned char byte2){
-		if (currentMarker >= MAXMEMBYTES - 2){
+		if (currentMarker + 2 > MAXMEMBYTES - 1){
 			return;
 		}
 		byteCode[currentMarker] = byte1;
@@ -54,7 +54,7 @@ public:
 	}
 
 	inline void WriteCode3Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3){
-		if (currentMarker >= MAXMEMBYTES - 3){
+		if (currentMarker + 3 > MAXMEMBYTES - 1){
 			return;
 		}
 		byteCode[currentMarker] = byte1;
@@ -64,7 +64,7 @@ public:
 	}
 
 	inline void WriteCode3BytesFromOpcodeRegNumPair(unsigned char opcode, RegisterNumPair* r) {
-		if (currentMarker >= MAXMEMBYTES - 3) {
+		if (currentMarker + 3 > MAXMEMBYTES - 1) {
 			return;
 		}
 		byteCode[currentMarker] = opcode;
@@ -74,7 +74,7 @@ public:
 	}
 
 	inline void WriteCode4Bytes(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4){
-		if (currentMarker >= MAXMEMBYTES - 4){
+		if (currentMarker + 4 > MAXMEMBYTES - 1){
 			return;
 		}
 		byteCode[currentMarker] = byte1;
@@ -85,7 +85,7 @@ public:
 	}
 
 	inline void WriteCode4BytesFromOpcodeRegNumTriplet(unsigned char opcode, RegisterNumTriplet* r) {
-		if (currentMarker >= MAXMEMBYTES - 4) {
+		if (currentMarker + 4 > MAXMEMBYTES - 1) {
 			return;
 		}
 		byteCode[currentMarker] = opcode;
@@ -95,7 +95,7 @@ public:
 		currentMarker += 4;
 	}
 	
-	inline unsigned char GetCurrentMarker() {
+	inline int GetCurrentMarker() {
 		return currentMarker;
 	}
 
@@ -103,15 +103,15 @@ public:
 		return &byteCode[0];
 	}
 
-	inline void SetLoadingOffset(unsigned char offset) {
+	inline void SetLoadingOffset(int offset) {
 		loadingOffset = offset;
 	}
 
-	inline unsigned char GetLoadingOffset() {
+	inline int GetLoadingOffset() {
 		return loadingOffset;
 	}
 
-	inline void SetMainOffset(unsigned char offset) {
+	inline void SetMainOffset(int offset) {
 		mainOffset = offset;
 	}
 	
@@ -119,7 +119,7 @@ public:
 		mainOffset = currentMarker;
 	}
 
-	inline unsigned char GetMainOffset() {
+	inline int GetMainOffset() {
 		return mainOffset;
 	}
 };

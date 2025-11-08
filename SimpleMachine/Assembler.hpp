@@ -32,7 +32,7 @@ public:
 	}
 
 	bool PassForSymbols() {
-		int ssm = 0;
+		size_t ssm = 0;
 		char buffer[BUFFERLENGTH];
 		int lineNumber = 0;
 
@@ -51,7 +51,7 @@ public:
 
 
 	bool Translate(){
-		int ssm = 0;
+		size_t ssm = 0;
 		char buffer[BUFFERLENGTH];
 		int lineNumber = 0;
 		

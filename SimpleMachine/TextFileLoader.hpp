@@ -1,18 +1,14 @@
 #ifndef _TEXTFILELOADER_
 #define _TEXTFILELOADER_
 
+#include <cctype>
 #include <cstdlib>
 #include <string>
 #include <fstream>
 #include <iostream>
 
 char convertToUpperCase(char c) {
-	if (c >= 'a' && c <= 'z') {
-		return c - 32;
-	}
-	else {
-		return c;
-	}
+	return static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
 }
 
 class TextFileLoader
@@ -27,11 +23,13 @@ public:
 		bufferLength = 0;
 	}
 
-	char GetTextAt(unsigned int i){
-		if (i >= bufferLength){
+	char GetTextAt(size_t i) {
+		if (i < bufferLength) {
+			return buffer[i];
+		}
+		else {
 			return '\0';
 		}
-		return buffer[i];
 	}
 
 	TextFileLoader(const char* filename)
@@ -77,9 +75,9 @@ public:
 		return true;
 	}
 
-	bool GetNonEmptyLine(char* buf, int bufLen, int* ssm, int* lineNumber) {
-		unsigned int i = *ssm;
-		int k;
+	bool GetNonEmptyLine(char* buf, size_t bufLen, size_t* ssm, int* lineNumber) {
+		size_t i = *ssm;
+		size_t k;
 		char c;
 		int validCharCount;
 		do
