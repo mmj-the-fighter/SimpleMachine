@@ -40,7 +40,7 @@ It acts as a minimal CPU with a basic assembler, disassembler, and simulator.
 | **JZ** | `JZ label` | set pc = label_address if zero flag **is** set | `JZ LOOP` |[Done]
 | **JNZ** | `JNZ label` | set pc = label_address if zero flag **not** set | `JNZ LOOP` |[Done]
 | **CMP** | `CMP reg1 reg2` | temp = reg1 - reg2; affect_condition_codes(temp)  | `CMP A B` |[Done]
-| **JEQ** | `JEQ label` | set pc = label_address if condition code is  **is** `==` | `JEQ LOOP` |[Done]
+| **JEQ** | `JEQ label` | set pc = label_address if condition code **is** `==` | `JEQ LOOP` |[Done]
 | **JNEQ** | `JNEQ label` | set pc = label_address if condition code **is not** `==` | `JNEQ LOOP` |[Done]
 | **JLT** | `JLT label` | set pc = label_address if condition code **is** `<` | `JLT LOOP` |[Done]
 | **JGT** | `JGT label` | set pc = label_address if condition code **is** `>` | `JGT LOOP` |[Done]
